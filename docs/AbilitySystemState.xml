@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AbilitySystemState" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="ability_events" type="AbilityEvent[]" setter="set_ability_events" getter="get_ability_events" default="[]">
+		</member>
+		<member name="attribute_map" type="AttributeMap" setter="set_attribute_map" getter="get_attribute_map">
+		</member>
+		<member name="granted_abilities" type="Ability[]" setter="set_granted_abilities" getter="get_granted_abilities" default="[]">
+		</member>
+		<member name="granted_tags" type="Tag[]" setter="set_granted_tags" getter="get_granted_tags" default="[]">
+		</member>
+	</members>
+</class>

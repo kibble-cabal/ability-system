@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="Attribute" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="attribute_name" type="StringName" setter="set_attribute_name" getter="get_attribute_name" default="&amp;&quot;&quot;">
+		</member>
+		<member name="default_value" type="float" setter="set_default_value" getter="get_default_value" default="0.0">
+		</member>
+		<member name="max_value" type="float" setter="set_max_value" getter="get_max_value" default="1.0">
+		</member>
+		<member name="min_value" type="float" setter="set_min_value" getter="get_min_value" default="0.0">
+		</member>
+		<member name="ui_color" type="Color" setter="set_ui_color" getter="get_ui_color" default="Color(0, 0, 0, 1)">
+		</member>
+	</members>
+</class>
