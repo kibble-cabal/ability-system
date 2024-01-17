@@ -11,7 +11,7 @@ class Effect : public Resource {
 	GDCLASS(Effect, Resource);
 
 private:
-	float elapsed_time;
+	float elapsed_time = 0.0;
 
 	/* UI properties */
 	StringName ui_name;
@@ -21,13 +21,6 @@ protected:
 	static void _bind_methods();
 
 public:
-	/* Constructors */
-	Effect() {
-		elapsed_time = 0.0;
-	}
-
-	~Effect() {}
-
 	/* Getters/setters */
 
 	GETSET_RESOURCE(float, elapsed_time)

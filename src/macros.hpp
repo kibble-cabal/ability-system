@@ -5,9 +5,6 @@
  *** _bind_methods helper macros ***
  ***********************************/
 
-#define BIND_VIRTUAL(name, ...) \
-	ClassDB::add_virtual_method(get_class_static(), MethodInfo(#name), true, PackedStringArray({ __VA_ARGS__ }));
-
 #define BIND_GETSET(cls, prop_name)                                           \
 	ClassDB::bind_method(D_METHOD("get_" #prop_name), &cls::get_##prop_name); \
 	ClassDB::bind_method(D_METHOD("set_" #prop_name, #prop_name), &cls::set_##prop_name);

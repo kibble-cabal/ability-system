@@ -3,9 +3,9 @@
 
 void Effect::_bind_methods() {
 	/* Bind virtual methods */
-	BIND_VIRTUAL(_start, "owner");
-	BIND_VIRTUAL(_tick, "owner", "delta");
-	BIND_VIRTUAL(_finish, "owner");
+	ClassDB::add_virtual_method(get_class_static(), MethodInfo("_start", OBJECT_PROP_INFO(AbilitySystem, owner)), true, PackedStringArray({ "owner" }));
+	ClassDB::add_virtual_method(get_class_static(), MethodInfo("_tick", OBJECT_PROP_INFO(AbilitySystem, owner), PropertyInfo(Variant::FLOAT, "delta")), true, PackedStringArray({ "owner", "delta" }));
+	ClassDB::add_virtual_method(get_class_static(), MethodInfo("_finish", OBJECT_PROP_INFO(AbilitySystem, owner)), true, PackedStringArray({ "owner" }));
 
 	/* Bind property getters/setters */
 	BIND_GETSET(Effect, elapsed_time);
@@ -18,7 +18,7 @@ void Effect::_bind_methods() {
 	ClassDB::bind_integer_constant(get_class_static(), "Status", "FINISHED", Status::FINISHED);
 
 	/* Bind properties */
-	PROP(Variant::FLOAT, elapsed_time);
+	NO_EDITOR_PROP(Variant::FLOAT, elapsed_time);
 
 	ADD_GROUP("UI", "ui_");
 	PROP(Variant::STRING_NAME, ui_name);
