@@ -8,9 +8,9 @@
 #include "tag.hpp"
 
 namespace as_signal {
-const StringName EventBlocked = "ability_event_blocked";
-const StringName EventFinished = "ability_event_finished";
-const StringName EventStarted = "ability_event_started";
+static const auto EventBlocked = "ability_event_blocked";
+static const auto EventFinished = "ability_event_finished";
+static const auto EventStarted = "ability_event_started";
 }; //namespace as_signal
 
 class AbilitySystemState : public Resource {
