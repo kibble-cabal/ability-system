@@ -4,8 +4,7 @@
 enum Status {
 	READY,
 	RUNNING,
-	FINISHED,
-	FAILURE
+	FINISHED
 };
 
 #endif
