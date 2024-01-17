@@ -21,6 +21,23 @@ void AbilitySystem::_bind_methods() {
 	/* Bind methods */
 	BIND_GETSET(AbilitySystem, state);
 
+	ClassDB::bind_method(D_METHOD("has_attribute", "attribute"), &AbilitySystem::has_attribute);
+	ClassDB::bind_method(D_METHOD("grant_attribute", "attribute"), &AbilitySystem::grant_attribute);
+	ClassDB::bind_method(D_METHOD("revoke_attribute", "attribute"), &AbilitySystem::revoke_attribute);
+	ClassDB::bind_method(D_METHOD("get_attribute_value", "attribute"), &AbilitySystem::get_attribute_value);
+	ClassDB::bind_method(D_METHOD("set_attribute_value", "attribute", "value"), &AbilitySystem::set_attribute_value);
+	ClassDB::bind_method(D_METHOD("modify_attribute_value", "attribute", "by_amount"), &AbilitySystem::modify_attribute_value);
+	ClassDB::bind_method(D_METHOD("can_activate", "ability"), &AbilitySystem::can_activate);
+	ClassDB::bind_method(D_METHOD("has_ability", "ability"), &AbilitySystem::has_ability);
+	ClassDB::bind_method(D_METHOD("grant_ability", "ability"), &AbilitySystem::grant_ability);
+	ClassDB::bind_method(D_METHOD("revoke_ability", "ability"), &AbilitySystem::revoke_ability);
+	ClassDB::bind_method(D_METHOD("activate", "ability"), &AbilitySystem::activate);
+	ClassDB::bind_method(D_METHOD("has_tag", "tag"), &AbilitySystem::has_tag);
+	ClassDB::bind_method(D_METHOD("has_some_tags", "tags"), &AbilitySystem::has_some_tags);
+	ClassDB::bind_method(D_METHOD("has_all_tags", "tags"), &AbilitySystem::has_all_tags);
+	ClassDB::bind_method(D_METHOD("grant_tag", "tag"), &AbilitySystem::grant_tag);
+	ClassDB::bind_method(D_METHOD("revoke_tag", "tag"), &AbilitySystem::revoke_tag);
+
 	/* Bind properties */
 	OBJECT_PROP(AbilitySystemState, state);
 
@@ -58,11 +75,10 @@ bool AbilitySystem::has_attribute(Ref<Attribute> attribute) const {
 	return state->attribute_map->has(attribute);
 }
 
-void AbilitySystem::grant_attribute(Ref<Attribute> attribute, float value) {
+void AbilitySystem::grant_attribute(Ref<Attribute> attribute) {
 	ERR_FAIL_NULL(state);
 	if (!has_attribute(attribute)) {
 		state->attribute_map->add(attribute);
-		state->attribute_map->set_value(attribute, value);
 	}
 }
 
@@ -71,6 +87,25 @@ void AbilitySystem::revoke_attribute(Ref<Attribute> attribute) {
 	if (has_attribute(attribute)) {
 		state->attribute_map->remove(attribute);
 	}
+}
+
+float AbilitySystem::get_attribute_value(Ref<Attribute> attribute) const {
+	ERR_FAIL_NULL_V(state, attribute->get_default_value());
+	if (has_attribute(attribute)) {
+		return state->attribute_map->get_value(attribute);
+	}
+	return attribute->get_default_value();
+}
+
+void AbilitySystem::set_attribute_value(Ref<Attribute> attribute, float value) {
+	ERR_FAIL_NULL(state);
+	if (has_attribute(attribute)) {
+		state->attribute_map->set_value(attribute, value);
+	}
+}
+
+void AbilitySystem::modify_attribute_value(Ref<Attribute> attribute, float by_amount) {
+	set_attribute_value(attribute, get_attribute_value(attribute) + by_amount);
 }
 
 /***********************
@@ -99,7 +134,7 @@ void AbilitySystem::revoke_ability(Ref<Ability> ability) {
 }
 
 bool AbilitySystem::can_activate(Ref<Ability> ability) const {
-	return has_ability(ability) && has_all_tags(ability->get_tags_required()) && has_no_tags(ability->get_tags_blocking());
+	return has_ability(ability) && has_all_tags(ability->get_tags_required()) && !has_some_tags(ability->get_tags_blocking());
 }
 
 Ref<AbilityEvent> AbilitySystem::activate(Ref<Ability> ability) {
@@ -138,11 +173,6 @@ bool AbilitySystem::has_all_tags(TypedArray<Tag> tags_to_check) const {
 	return all(tags_to_check, [this](Ref<Tag> tag) {
 		return has_tag(tag);
 	});
-}
-
-bool AbilitySystem::has_no_tags(TypedArray<Tag> tags_to_check) const {
-	ERR_FAIL_NULL_V(state, false);
-	return !has_some_tags(tags_to_check);
 }
 
 void AbilitySystem::grant_tag(Ref<Tag> tag) {

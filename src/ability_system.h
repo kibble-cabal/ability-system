@@ -51,8 +51,11 @@ public:
 	/* Attribute methods */
 
 	bool has_attribute(Ref<Attribute> attribute) const;
-	void grant_attribute(Ref<Attribute> attribute, float value);
+	void grant_attribute(Ref<Attribute> attribute);
 	void revoke_attribute(Ref<Attribute> attribute);
+	float get_attribute_value(Ref<Attribute> attribute) const;
+	void set_attribute_value(Ref<Attribute> attribute, float value);
+	void modify_attribute_value(Ref<Attribute> attribute, float by_amount);
 
 	/* Ability methods */
 
@@ -67,7 +70,6 @@ public:
 	bool has_tag(Ref<Tag> tag_to_check) const;
 	bool has_some_tags(TypedArray<Tag> tags_to_check) const;
 	bool has_all_tags(TypedArray<Tag> tags_to_check) const;
-	bool has_no_tags(TypedArray<Tag> tags_to_check) const;
 	void grant_tag(Ref<Tag> tag);
 	void revoke_tag(Ref<Tag> tag);
 };

@@ -6,6 +6,106 @@
 	</description>
 	<tutorials>
 	</tutorials>
+	<methods>
+		<method name="activate">
+			<return type="AbilityEvent" />
+			<param index="0" name="ability" type="Ability" />
+			<description>
+			</description>
+		</method>
+		<method name="can_activate" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="ability" type="Ability" />
+			<description>
+			</description>
+		</method>
+		<method name="get_attribute_value" qualifiers="const">
+			<return type="float" />
+			<param index="0" name="attribute" type="Attribute" />
+			<description>
+			</description>
+		</method>
+		<method name="grant_ability">
+			<return type="void" />
+			<param index="0" name="ability" type="Ability" />
+			<description>
+			</description>
+		</method>
+		<method name="grant_attribute">
+			<return type="void" />
+			<param index="0" name="attribute" type="Attribute" />
+			<description>
+			</description>
+		</method>
+		<method name="grant_tag">
+			<return type="void" />
+			<param index="0" name="tag" type="Tag" />
+			<description>
+			</description>
+		</method>
+		<method name="has_ability" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="ability" type="Ability" />
+			<description>
+			</description>
+		</method>
+		<method name="has_all_tags" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="tags" type="Tag[]" />
+			<description>
+			</description>
+		</method>
+		<method name="has_attribute" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="attribute" type="Attribute" />
+			<description>
+			</description>
+		</method>
+		<method name="has_some_tags" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="tags" type="Tag[]" />
+			<description>
+			</description>
+		</method>
+		<method name="has_tag" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="tag" type="Tag" />
+			<description>
+			</description>
+		</method>
+		<method name="modify_attribute_value">
+			<return type="void" />
+			<param index="0" name="attribute" type="Attribute" />
+			<param index="1" name="by_amount" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="revoke_ability">
+			<return type="void" />
+			<param index="0" name="ability" type="Ability" />
+			<description>
+			</description>
+		</method>
+		<method name="revoke_attribute">
+			<return type="void" />
+			<param index="0" name="attribute" type="Attribute" />
+			<description>
+			</description>
+		</method>
+		<method name="revoke_tag">
+			<return type="void" />
+			<param index="0" name="tag" type="Tag" />
+			<description>
+			</description>
+		</method>
+		<method name="set_attribute_value">
+			<return type="void" />
+			<param index="0" name="attribute" type="Attribute" />
+			<param index="1" name="value" type="float" />
+			<description>
+			</description>
+		</method>
+	</methods>
 	<members>
 		<member name="state" type="AbilitySystemState" setter="set_state" getter="get_state">
 		</member>
