@@ -3,7 +3,6 @@
 
 #include "ability.hpp"
 #include "core/io/resource.h"
-#include "macros.hpp"
 #include "status.hpp"
 
 class AbilitySystem;
@@ -13,6 +12,7 @@ class AbilityEvent : public Resource {
 
 private:
 	Ref<Ability> ability;
+	TypedArray<Effect> effect_instances;
 
 protected:
 	static void _bind_methods();
@@ -20,7 +20,8 @@ protected:
 public:
 	GETSET_RESOURCE(Ref<Ability>, ability)
 
-	Status _tick(AbilitySystem owner, float delta);
+	void start(AbilitySystem *owner);
+	Status tick(AbilitySystem *owner, float delta);
 };
 
 #endif
