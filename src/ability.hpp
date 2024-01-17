@@ -3,7 +3,7 @@
 
 #include "core/io/resource.h"
 #include "core/variant/typed_array.h"
-#include "effect.h"
+#include "effect/effect.h"
 #include "macros.hpp"
 #include "status.hpp"
 #include "tag.hpp"

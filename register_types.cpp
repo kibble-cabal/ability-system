@@ -8,6 +8,8 @@
 #include "src/ability_system.h"
 #include "src/attribute.hpp"
 #include "src/attribute_map.hpp"
+#include "src/effect/attribute_effect.h"
+#include "src/effect/wait_effect.hpp"
 
 void initialize_ability_system_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
@@ -22,6 +24,8 @@ void initialize_ability_system_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<Tag>();
 
 	ClassDB::register_class<Effect>();
+	ClassDB::register_class<WaitEffect>();
+	ClassDB::register_class<AttributeEffect>();
 
 	ClassDB::register_class<AbilitySystem>();
 	ClassDB::register_class<AbilitySystemState>();

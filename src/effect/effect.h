@@ -2,8 +2,8 @@
 #define AS_EFFECT_H
 
 #include "core/io/resource.h"
-#include "macros.hpp"
-#include "status.hpp"
+#include "../macros.hpp"
+#include "../status.hpp"
 
 class AbilitySystem;
 

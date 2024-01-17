@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AttributeEffect" inherits="Effect" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="attribute" type="Attribute" setter="set_attribute" getter="get_attribute">
+		</member>
+		<member name="max_effect" type="float" setter="set_max_effect" getter="get_max_effect" default="1.0">
+		</member>
+		<member name="min_effect" type="float" setter="set_min_effect" getter="get_min_effect" default="0.0">
+		</member>
+	</members>
+</class>

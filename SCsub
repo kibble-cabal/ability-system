@@ -4,7 +4,8 @@ sources = [
     "register_types.cpp",
     "src/ability_event.cpp",
     "src/ability_system.cpp",
-    "src/effect.cpp",
+    "src/effect/effect.cpp",
+    "src/effect/attribute_effect.cpp",
 ]
 
 env.add_source_files(env.modules_sources, sources)  # Add all cpp files to the build

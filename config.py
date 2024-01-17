@@ -22,5 +22,7 @@ def get_doc_classes():
         "AttributeMap",
         "Attribute",
         "Effect",
+        "AttributeEffect",
+        "WaitEffect",
         "Tag",
     ]
