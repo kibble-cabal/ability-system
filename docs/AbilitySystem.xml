@@ -10,4 +10,21 @@
 		<member name="state" type="AbilitySystemState" setter="set_state" getter="get_state">
 		</member>
 	</members>
+	<signals>
+		<signal name="ability_event_blocked">
+			<param index="0" name="ability" type="Ability" />
+			<description>
+			</description>
+		</signal>
+		<signal name="ability_event_finished">
+			<param index="0" name="event" type="AbilityEvent" />
+			<description>
+			</description>
+		</signal>
+		<signal name="ability_event_started">
+			<param index="0" name="event" type="AbilityEvent" />
+			<description>
+			</description>
+		</signal>
+	</signals>
 </class>

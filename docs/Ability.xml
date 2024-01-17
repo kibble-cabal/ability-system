@@ -9,11 +9,7 @@
 	<members>
 		<member name="ability_name" type="StringName" setter="set_ability_name" getter="get_ability_name" default="&amp;&quot;&quot;">
 		</member>
-		<member name="effects_on_blocked" type="Effect[]" setter="set_effects_on_blocked" getter="get_effects_on_blocked" default="[]">
-		</member>
-		<member name="effects_on_finished" type="Effect[]" setter="set_effects_on_finished" getter="get_effects_on_finished" default="[]">
-		</member>
-		<member name="effects_on_started" type="Effect[]" setter="set_effects_on_started" getter="get_effects_on_started" default="[]">
+		<member name="effects" type="Effect[]" setter="set_effects" getter="get_effects" default="[]">
 		</member>
 		<member name="tags_blocking" type="Tag[]" setter="set_tags_blocking" getter="get_tags_blocking" default="[]">
 		</member>

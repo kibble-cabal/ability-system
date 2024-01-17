@@ -7,13 +7,13 @@
 	<tutorials>
 	</tutorials>
 	<members>
-		<member name="ability_events" type="AbilityEvent[]" setter="set_ability_events" getter="get_ability_events" default="[]">
+		<member name="abilities" type="Ability[]" setter="set_abilities" getter="get_abilities" default="[]">
 		</member>
 		<member name="attribute_map" type="AttributeMap" setter="set_attribute_map" getter="get_attribute_map">
 		</member>
-		<member name="granted_abilities" type="Ability[]" setter="set_granted_abilities" getter="get_granted_abilities" default="[]">
+		<member name="events" type="AbilityEvent[]" setter="set_events" getter="get_events" default="[]">
 		</member>
-		<member name="granted_tags" type="Tag[]" setter="set_granted_tags" getter="get_granted_tags" default="[]">
+		<member name="tags" type="Tag[]" setter="set_tags" getter="get_tags" default="[]">
 		</member>
 	</members>
 </class>
