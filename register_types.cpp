@@ -2,12 +2,12 @@
 
 #include "register_types.h"
 
-#include "ability.hpp"
-#include "ability_event.h"
-#include "ability_system.h"
-#include "attribute.hpp"
-#include "attribute_map.hpp"
 #include "core/object/class_db.h"
+#include "src/ability.hpp"
+#include "src/ability_event.h"
+#include "src/ability_system.h"
+#include "src/attribute.hpp"
+#include "src/attribute_map.hpp"
 
 void initialize_ability_system_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {

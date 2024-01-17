@@ -1,3 +1,5 @@
 Import("env")
 
-env.add_source_files(env.modules_sources, "*.cpp")  # Add all cpp files to the build
+sources = ["register_types.cpp", "src/ability_event.cpp", "src/ability_system.cpp"]
+
+env.add_source_files(env.modules_sources, sources)  # Add all cpp files to the build
