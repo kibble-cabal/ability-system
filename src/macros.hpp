@@ -5,8 +5,8 @@
  *** _bind_methods helper macros ***
  ***********************************/
 
-#define BIND_VIRTUAL(name, args) \
-	ClassDB::add_virtual_method(get_class_static(), MethodInfo(#name), true, PackedStringArray(args));
+#define BIND_VIRTUAL(name, ...) \
+	ClassDB::add_virtual_method(get_class_static(), MethodInfo(#name), true, PackedStringArray({ __VA_ARGS__ }));
 
 #define BIND_GETSET(cls, prop_name)                                           \
 	ClassDB::bind_method(D_METHOD("get_" #prop_name), &cls::get_##prop_name); \
@@ -19,6 +19,12 @@
 
 #define OBJECT_PROP(obj_cls, prop_name) \
 	ClassDB::add_property(get_class_static(), PropertyInfo(Variant::OBJECT, #prop_name, PROPERTY_HINT_RESOURCE_TYPE, #obj_cls), "set_" #prop_name, "get_" #prop_name);
+
+#define NO_EDITOR_PROP(variant_ty, prop_name) \
+	ClassDB::add_property(get_class_static(), PropertyInfo(variant_ty, #prop_name, PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NO_EDITOR), "set_" #prop_name, "get_" #prop_name);
+
+#define OBJECT_PROP_INFO(obj_cls, prop_name) \
+	PropertyInfo(Variant::OBJECT, #prop_name, PROPERTY_HINT_RESOURCE_TYPE, #obj_cls)
 
 /***********************************
  *** setter/getter helper macros ***
