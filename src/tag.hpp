@@ -20,7 +20,7 @@ protected:
 		BIND_GETSET(Tag, ui_color);
 
 		GROUP("Tag");
-		PROP(Variant::FLOAT, identifier);
+		PROP(Variant::STRING_NAME, identifier);
 
 		ADD_GROUP("UI", "ui_");
 		PROP(Variant::COLOR, ui_color)
