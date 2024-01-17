@@ -3,7 +3,7 @@
 
 #include "core/io/resource.h"
 #include "core/variant/typed_array.h"
-#include "effect.hpp"
+#include "effect.h"
 #include "macros.hpp"
 #include "status.hpp"
 #include "tag.hpp"
@@ -21,9 +21,7 @@ private:
 	TypedArray<Tag> tags_required;
 
 	/* Effects */
-	TypedArray<Effect> effects_on_started;
-	TypedArray<Effect> effects_on_blocked;
-	TypedArray<Effect> effects_on_finished;
+	TypedArray<Effect> effects;
 
 	/* UI properties */
 	Color ui_color;
@@ -34,9 +32,7 @@ protected:
 		BIND_GETSET(Ability, ability_name);
 		BIND_GETSET(Ability, tags_blocking);
 		BIND_GETSET(Ability, tags_required);
-		BIND_GETSET(Ability, effects_on_started);
-		BIND_GETSET(Ability, effects_on_blocked);
-		BIND_GETSET(Ability, effects_on_finished);
+		BIND_GETSET(Ability, effects);
 		BIND_GETSET(Ability, ui_color);
 
 		/* Bind properties */
@@ -46,10 +42,8 @@ protected:
 		PROP(Variant::ARRAY, tags_blocking);
 		PROP(Variant::ARRAY, tags_required);
 
-		ADD_GROUP("Effects", "effects_");
-		PROP(Variant::ARRAY, effects_on_started);
-		PROP(Variant::ARRAY, effects_on_blocked);
-		PROP(Variant::ARRAY, effects_on_finished);
+		GROUP("Effects");
+		PROP(Variant::ARRAY, effects);
 
 		ADD_GROUP("UI", "ui_");
 		PROP(Variant::COLOR, ui_color);
@@ -59,10 +53,7 @@ public:
 	GETSET_RESOURCE(StringName, ability_name)
 	GETSET_RESOURCE(TypedArray<Tag>, tags_blocking)
 	GETSET_RESOURCE(TypedArray<Tag>, tags_required)
-
-	GETSET_RESOURCE(TypedArray<Effect>, effects_on_started)
-	GETSET_RESOURCE(TypedArray<Effect>, effects_on_blocked)
-	GETSET_RESOURCE(TypedArray<Effect>, effects_on_finished)
+	GETSET_RESOURCE(TypedArray<Effect>, effects)
 
 	GETSET_RESOURCE(Color, ui_color)
 };
