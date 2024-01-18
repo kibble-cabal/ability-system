@@ -14,14 +14,17 @@ def get_doc_path():
 
 
 def get_doc_classes():
-    return [
+    core_classes = [
         "AbilityEvent",
         "Ability",
         "AbilitySystem",
-        "AttributeMap",
         "Attribute",
+        "Tag",
+    ]
+    effect_classes = [
         "Effect",
         "AttributeEffect",
         "WaitEffect",
-        "Tag",
+        "TagEffect",
     ]
+    return core_classes + effect_classes

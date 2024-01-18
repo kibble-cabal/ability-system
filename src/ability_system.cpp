@@ -11,6 +11,11 @@ void AbilitySystem::_bind_methods() {
 	BIND_GETSET(AbilitySystem, attribute_dict);
 	BIND_GETSET(AbilitySystem, update_mode);
 
+	/* Bind constants */
+	ClassDB::bind_integer_constant(get_class_static(), "UpdateMode", "DISABLED", UpdateMode::DISABLED);
+	ClassDB::bind_integer_constant(get_class_static(), "UpdateMode", "PHYSICS", UpdateMode::PHYSICS);
+	ClassDB::bind_integer_constant(get_class_static(), "UpdateMode", "PROCESS", UpdateMode::PROCESS);
+
 	ClassDB::bind_method(D_METHOD("has_attribute", "attribute"), &AbilitySystem::has_attribute);
 	ClassDB::bind_method(D_METHOD("grant_attribute", "attribute"), &AbilitySystem::grant_attribute);
 	ClassDB::bind_method(D_METHOD("revoke_attribute", "attribute"), &AbilitySystem::revoke_attribute);

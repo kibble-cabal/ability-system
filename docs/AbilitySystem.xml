@@ -171,4 +171,12 @@
 			</description>
 		</signal>
 	</signals>
+	<constants>
+		<constant name="DISABLED" value="0" enum="UpdateMode">
+		</constant>
+		<constant name="PHYSICS" value="1" enum="UpdateMode">
+		</constant>
+		<constant name="PROCESS" value="2" enum="UpdateMode">
+		</constant>
+	</constants>
 </class>
