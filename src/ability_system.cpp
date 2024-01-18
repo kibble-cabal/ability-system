@@ -52,6 +52,7 @@ void AbilitySystem::_notification(int notification) {
 		case NOTIFICATION_PHYSICS_PROCESS:
 			Variant delta = get_process_delta_time();
 			update(delta);
+			break;
 	}
 }
 
@@ -163,7 +164,7 @@ Ref<AbilityEvent> AbilitySystem::activate(Ref<Ability> ability) {
 bool AbilitySystem::has_tag(Ref<Tag> tag_to_check) const {
 	ERR_FAIL_NULL_V(state, false);
 	return any(state->tags, [tag_to_check](Ref<Tag> tag) {
-		return tag == tag_to_check;
+		return tag->get_identifier() == tag_to_check->get_identifier();
 	});
 }
 

@@ -18,8 +18,10 @@ void TagEffect::_start(AbilitySystem *owner) {
 		switch (operation) {
 			case Operation::ADD:
 				owner->grant_tag(tag);
+				break;
 			case Operation::REMOVE:
 				owner->revoke_tag(tag);
+				break;
 		}
 	});
 }
