@@ -39,11 +39,11 @@ protected:
 		PROP(Variant::STRING_NAME, ability_name);
 
 		ADD_GROUP("Tags", "tags_");
-		PROP(Variant::ARRAY, tags_blocking);
-		PROP(Variant::ARRAY, tags_required);
+		ARRAY_PROP(tags_blocking, RESOURCE_TYPE_HINT("Tag"));
+		ARRAY_PROP(tags_required, RESOURCE_TYPE_HINT("Tag"));
 
 		GROUP("Effects");
-		PROP(Variant::ARRAY, effects);
+		ARRAY_PROP(effects, RESOURCE_TYPE_HINT("Effect"));
 
 		ADD_GROUP("UI", "ui_");
 		PROP(Variant::COLOR, ui_color);

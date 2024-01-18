@@ -19,6 +19,7 @@ protected:
 
 public:
 	GETSET_RESOURCE(Ref<Ability>, ability)
+	GETSET_RESOURCE(TypedArray<Effect>, effect_instances)
 
 	void start(AbilitySystem *owner);
 	Status tick(AbilitySystem *owner, float delta);

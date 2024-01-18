@@ -46,7 +46,9 @@ protected:
 public:
 	GETSET(Ref<AbilitySystemState>, state)
 
-	void _physics_process(float delta);
+	void _notification(int notification);
+
+	void update(float delta);
 
 	/* Attribute methods */
 

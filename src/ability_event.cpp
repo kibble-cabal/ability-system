@@ -6,7 +6,9 @@
 
 void AbilityEvent::_bind_methods() {
 	BIND_GETSET(AbilityEvent, ability);
+	BIND_GETSET(AbilityEvent, effect_instances);
 	OBJECT_PROP(Ability, ability);
+	ARRAY_PROP(effect_instances, RESOURCE_TYPE_HINT("Effect"));
 }
 
 void AbilityEvent::start(AbilitySystem *owner) {
@@ -22,7 +24,7 @@ Status AbilityEvent::tick(AbilitySystem *owner, float delta) {
 	std::vector<int> finished_effects;
 
 	// Tick every effect.
-	for_each_i(effect_instances, [owner, delta, &finished_effects](Ref<Effect> effect, int i) {
+	for_each_i(effect_instances, [&owner, delta, &finished_effects](Ref<Effect> effect, int i) {
 		// Make a list of all finished effects (succeeded or failed).
 		if (effect->tick(owner, delta) == Status::FINISHED)
 			finished_effects.push_back(i);

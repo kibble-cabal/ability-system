@@ -26,6 +26,7 @@ void Effect::_bind_methods() {
 }
 
 Status Effect::tick(AbilitySystem *owner, float delta) {
+	elapsed_time += delta;
 	return _tick(owner, delta);
 }
 

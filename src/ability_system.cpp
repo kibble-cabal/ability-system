@@ -12,9 +12,9 @@ void AbilitySystemState::_bind_methods() {
 
 	/* Bind properties */
 	OBJECT_PROP(AttributeMap, attribute_map);
-	PROP(Variant::ARRAY, tags);
-	PROP(Variant::ARRAY, abilities);
-	PROP(Variant::ARRAY, events);
+	ARRAY_PROP(tags, RESOURCE_TYPE_HINT("Tag"));
+	ARRAY_PROP(abilities, RESOURCE_TYPE_HINT("Ability"));
+	ARRAY_PROP(events, RESOURCE_TYPE_HINT("AbilityEvent"));
 }
 
 void AbilitySystem::_bind_methods() {
@@ -47,7 +47,15 @@ void AbilitySystem::_bind_methods() {
 	ADD_SIGNAL(MethodInfo(as_signal::EventFinished, OBJECT_PROP_INFO(AbilityEvent, event)));
 }
 
-void AbilitySystem::_physics_process(float delta) {
+void AbilitySystem::_notification(int notification) {
+	switch (notification) {
+		case NOTIFICATION_PHYSICS_PROCESS:
+			Variant delta = get_process_delta_time();
+			update(delta);
+	}
+}
+
+void AbilitySystem::update(float delta) {
 	if (state.is_valid()) {
 		std::vector<int> finished_events;
 

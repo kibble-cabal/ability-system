@@ -9,5 +9,7 @@
 	<members>
 		<member name="ability" type="Ability" setter="set_ability" getter="get_ability">
 		</member>
+		<member name="effect_instances" type="Effect[]" setter="set_effect_instances" getter="get_effect_instances" default="[]">
+		</member>
 	</members>
 </class>
