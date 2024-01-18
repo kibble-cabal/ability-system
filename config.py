@@ -17,7 +17,6 @@ def get_doc_classes():
     return [
         "AbilityEvent",
         "Ability",
-        "AbilitySystemState",
         "AbilitySystem",
         "AttributeMap",
         "Attribute",

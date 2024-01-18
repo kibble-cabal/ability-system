@@ -7,6 +7,7 @@
 #include "macros.hpp"
 #include "status.hpp"
 #include "tag.hpp"
+#include "utils.hpp"
 
 class AbilitySystem;
 
@@ -56,6 +57,10 @@ public:
 	GETSET_RESOURCE(TypedArray<Effect>, effects)
 
 	GETSET_RESOURCE(Color, ui_color)
+
+	virtual String to_string() override {
+		return String("Ability({0})").format(variant_array(ability_name));
+	}
 };
 
 #endif

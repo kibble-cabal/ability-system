@@ -38,6 +38,7 @@ public:
 	Status tick(AbilitySystem *owner, float delta);
 	void start(AbilitySystem *owner);
 	void finish(AbilitySystem *owner);
+	virtual String to_string() override;
 };
 
 #endif

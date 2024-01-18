@@ -20,7 +20,6 @@ void initialize_ability_system_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<AbilityEvent>();
 
 	ClassDB::register_class<Attribute>();
-	ClassDB::register_class<AttributeMap>();
 
 	ClassDB::register_class<Tag>();
 
@@ -30,7 +29,6 @@ void initialize_ability_system_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<TagEffect>();
 
 	ClassDB::register_class<AbilitySystem>();
-	ClassDB::register_class<AbilitySystemState>();
 }
 
 void uninitialize_ability_system_module(ModuleInitializationLevel p_level) {

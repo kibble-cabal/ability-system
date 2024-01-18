@@ -107,7 +107,13 @@
 		</method>
 	</methods>
 	<members>
-		<member name="state" type="AbilitySystemState" setter="set_state" getter="get_state">
+		<member name="abilities" type="Ability[]" setter="set_abilities" getter="get_abilities" default="[]">
+		</member>
+		<member name="attributes" type="Dictionary" setter="set_attribute_dict" getter="get_attribute_dict" default="{}">
+		</member>
+		<member name="events" type="AbilityEvent[]" setter="set_events" getter="get_events" default="[]">
+		</member>
+		<member name="tags" type="Tag[]" setter="set_tags" getter="get_tags" default="[]">
 		</member>
 	</members>
 	<signals>
@@ -123,6 +129,42 @@
 		</signal>
 		<signal name="ability_event_started">
 			<param index="0" name="event" type="AbilityEvent" />
+			<description>
+			</description>
+		</signal>
+		<signal name="ability_granted">
+			<param index="0" name="ability" type="Ability" />
+			<description>
+			</description>
+		</signal>
+		<signal name="ability_revoked">
+			<param index="0" name="ability" type="Ability" />
+			<description>
+			</description>
+		</signal>
+		<signal name="attribute_granted">
+			<param index="0" name="attribute" type="Attribute" />
+			<description>
+			</description>
+		</signal>
+		<signal name="attribute_revoked">
+			<param index="0" name="attribute" type="Attribute" />
+			<description>
+			</description>
+		</signal>
+		<signal name="attribute_value_changed">
+			<param index="0" name="attribute" type="Attribute" />
+			<param index="1" name="value" type="float" />
+			<description>
+			</description>
+		</signal>
+		<signal name="tag_granted">
+			<param index="0" name="tag" type="Tag" />
+			<description>
+			</description>
+		</signal>
+		<signal name="tag_revoked">
+			<param index="0" name="tag" type="Tag" />
 			<description>
 			</description>
 		</signal>

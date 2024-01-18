@@ -3,23 +3,12 @@
 #include "macros.hpp"
 #include "utils.hpp"
 
-void AbilitySystemState::_bind_methods() {
-	/* Bind getter/setter methods */
-	BIND_GETSET(AbilitySystemState, attribute_map);
-	BIND_GETSET(AbilitySystemState, tags);
-	BIND_GETSET(AbilitySystemState, abilities);
-	BIND_GETSET(AbilitySystemState, events);
-
-	/* Bind properties */
-	OBJECT_PROP(AttributeMap, attribute_map);
-	ARRAY_PROP(tags, RESOURCE_TYPE_HINT("Tag"));
-	ARRAY_PROP(abilities, RESOURCE_TYPE_HINT("Ability"));
-	ARRAY_PROP(events, RESOURCE_TYPE_HINT("AbilityEvent"));
-}
-
 void AbilitySystem::_bind_methods() {
 	/* Bind methods */
-	BIND_GETSET(AbilitySystem, state);
+	BIND_GETSET(AbilitySystem, tags);
+	BIND_GETSET(AbilitySystem, abilities);
+	BIND_GETSET(AbilitySystem, events);
+	BIND_GETSET(AbilitySystem, attribute_dict);
 
 	ClassDB::bind_method(D_METHOD("has_attribute", "attribute"), &AbilitySystem::has_attribute);
 	ClassDB::bind_method(D_METHOD("grant_attribute", "attribute"), &AbilitySystem::grant_attribute);
@@ -39,12 +28,22 @@ void AbilitySystem::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("revoke_tag", "tag"), &AbilitySystem::revoke_tag);
 
 	/* Bind properties */
-	OBJECT_PROP(AbilitySystemState, state);
+	ARRAY_PROP(tags, RESOURCE_TYPE_HINT("Tag"));
+	ARRAY_PROP(abilities, RESOURCE_TYPE_HINT("Ability"));
+	ARRAY_PROP(events, RESOURCE_TYPE_HINT("AbilityEvent"));
+	ADD_PROPERTY(PropertyInfo(Variant::DICTIONARY, "attributes", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NO_EDITOR), "set_attribute_dict", "get_attribute_dict");
 
 	/* Bind signals */
 	ADD_SIGNAL(MethodInfo(as_signal::EventBlocked, OBJECT_PROP_INFO(Ability, ability)));
 	ADD_SIGNAL(MethodInfo(as_signal::EventStarted, OBJECT_PROP_INFO(AbilityEvent, event)));
 	ADD_SIGNAL(MethodInfo(as_signal::EventFinished, OBJECT_PROP_INFO(AbilityEvent, event)));
+	ADD_SIGNAL(MethodInfo(as_signal::AttributeGranted, OBJECT_PROP_INFO(Attribute, attribute)));
+	ADD_SIGNAL(MethodInfo(as_signal::AttributeRevoked, OBJECT_PROP_INFO(Attribute, attribute)));
+	ADD_SIGNAL(MethodInfo(as_signal::AttributeValueChanged, OBJECT_PROP_INFO(Attribute, attribute), PropertyInfo(Variant::FLOAT, "value")));
+	ADD_SIGNAL(MethodInfo(as_signal::AbilityGranted, OBJECT_PROP_INFO(Ability, ability)));
+	ADD_SIGNAL(MethodInfo(as_signal::AbilityRevoked, OBJECT_PROP_INFO(Ability, ability)));
+	ADD_SIGNAL(MethodInfo(as_signal::TagGranted, OBJECT_PROP_INFO(Tag, tag)));
+	ADD_SIGNAL(MethodInfo(as_signal::TagRevoked, OBJECT_PROP_INFO(Tag, tag)));
 }
 
 void AbilitySystem::_notification(int notification) {
@@ -57,22 +56,20 @@ void AbilitySystem::_notification(int notification) {
 }
 
 void AbilitySystem::update(float delta) {
-	if (state.is_valid()) {
-		std::vector<int> finished_events;
+	std::vector<int> finished_events;
 
-		// Tick every event.
-		for_each_i(state->events, [this, delta, &finished_events](Ref<AbilityEvent> event, int i) {
-			// Make a list of finished events.
-			if (event->tick(this, delta) == Status::FINISHED) {
-				finished_events.push_back(i);
-				emit_signal(as_signal::EventFinished, event);
-			}
-		});
+	// Tick every event.
+	for_each_i(events, [this, delta, &finished_events](Ref<AbilityEvent> event, int i) {
+		// Make a list of finished events.
+		if (event->tick(this, delta) == Status::FINISHED) {
+			finished_events.push_back(i);
+			emit_signal(as_signal::EventFinished, event);
+		}
+	});
 
-		// Remove all finished events.
-		for (int i : finished_events)
-			state->events.remove_at(i);
-	}
+	// Remove all finished events.
+	for (int i : finished_events)
+		events.remove_at(i);
 }
 
 /*************************
@@ -80,39 +77,39 @@ void AbilitySystem::update(float delta) {
  *************************/
 
 bool AbilitySystem::has_attribute(Ref<Attribute> attribute) const {
-	ERR_FAIL_NULL_V(state, false);
-	return state->attribute_map->has(attribute);
+	return attribute_map.has(attribute);
 }
 
 void AbilitySystem::grant_attribute(Ref<Attribute> attribute) {
-	ERR_FAIL_NULL(state);
 	if (!has_attribute(attribute)) {
-		state->attribute_map->add(attribute);
+		attribute_map.add(attribute);
+		emit_signal(as_signal::AttributeGranted, attribute);
 	}
 }
 
 void AbilitySystem::revoke_attribute(Ref<Attribute> attribute) {
-	ERR_FAIL_NULL(state);
 	if (has_attribute(attribute)) {
-		state->attribute_map->remove(attribute);
+		attribute_map.remove(attribute);
+		emit_signal(as_signal::AttributeRevoked, attribute);
 	}
 }
 
 float AbilitySystem::get_attribute_value(Ref<Attribute> attribute) const {
-	ERR_FAIL_NULL_V(state, attribute->get_default_value());
 	if (has_attribute(attribute)) {
-		return state->attribute_map->get_value(attribute);
+		return attribute_map.get_value(attribute);
 	}
 	return attribute->get_default_value();
 }
 
 void AbilitySystem::set_attribute_value(Ref<Attribute> attribute, float value) {
-	ERR_FAIL_NULL(state);
-	state->attribute_map->try_set_value(attribute, value);
+	if (has_attribute(attribute)) {
+		attribute_map.try_set_value(attribute, value);
+		emit_signal(as_signal::AttributeValueChanged, attribute);
+	}
 }
 
 void AbilitySystem::modify_attribute_value(Ref<Attribute> attribute, float by_amount) {
-	state->attribute_map->try_set_value(attribute, state->attribute_map->try_get_value(attribute) + by_amount);
+	set_attribute_value(attribute, get_attribute_value(attribute) + by_amount);
 }
 
 /***********************
@@ -120,23 +117,22 @@ void AbilitySystem::modify_attribute_value(Ref<Attribute> attribute, float by_am
  ***********************/
 
 bool AbilitySystem::has_ability(Ref<Ability> ability_to_check) const {
-	ERR_FAIL_NULL_V(state, false);
-	return any(state->abilities, [ability_to_check](Ref<Ability> ability) {
+	return any(abilities, [ability_to_check](Ref<Ability> ability) {
 		return ability == ability_to_check;
 	});
 }
 
 void AbilitySystem::grant_ability(Ref<Ability> ability) {
-	ERR_FAIL_NULL(state);
 	if (!has_ability(ability)) {
-		state->abilities.append(ability);
+		abilities.append(ability);
+		emit_signal(as_signal::AbilityGranted, ability);
 	}
 }
 
 void AbilitySystem::revoke_ability(Ref<Ability> ability) {
-	ERR_FAIL_NULL(state);
 	if (has_ability(ability)) {
-		state->abilities.erase(ability);
+		abilities.erase(ability);
+		emit_signal(as_signal::AbilityRevoked, ability);
 	}
 }
 
@@ -145,10 +141,9 @@ bool AbilitySystem::can_activate(Ref<Ability> ability) const {
 }
 
 Ref<AbilityEvent> AbilitySystem::activate(Ref<Ability> ability) {
-	ERR_FAIL_NULL_V(state, nullptr);
 	if (can_activate(ability)) {
 		auto event = memnew(AbilityEvent);
-		state->events.append(event);
+		events.append(event);
 		event->set_ability(ability);
 		event->start(this);
 		return event;
@@ -162,36 +157,46 @@ Ref<AbilityEvent> AbilitySystem::activate(Ref<Ability> ability) {
  *******************/
 
 bool AbilitySystem::has_tag(Ref<Tag> tag_to_check) const {
-	ERR_FAIL_NULL_V(state, false);
-	return any(state->tags, [tag_to_check](Ref<Tag> tag) {
-		return tag->get_identifier() == tag_to_check->get_identifier();
+	return any(tags, [tag_to_check](Ref<Tag> tag) {
+		return tag == tag_to_check;
 	});
 }
 
 bool AbilitySystem::has_some_tags(TypedArray<Tag> tags_to_check) const {
-	ERR_FAIL_NULL_V(state, false);
 	return any(tags_to_check, [this](Ref<Tag> tag) {
 		return has_tag(tag);
 	});
 }
 
 bool AbilitySystem::has_all_tags(TypedArray<Tag> tags_to_check) const {
-	ERR_FAIL_NULL_V(state, false);
 	return all(tags_to_check, [this](Ref<Tag> tag) {
 		return has_tag(tag);
 	});
 }
 
 void AbilitySystem::grant_tag(Ref<Tag> tag) {
-	ERR_FAIL_NULL(state);
 	if (!has_tag(tag)) {
-		state->tags.append(tag);
+		tags.append(tag);
 	}
 }
 
 void AbilitySystem::revoke_tag(Ref<Tag> tag) {
-	ERR_FAIL_NULL(state);
 	if (has_tag(tag)) {
-		state->tags.erase(tag);
+		tags.erase(tag);
 	}
+}
+
+/*********************
+ *** Other methods ***
+ *********************/
+
+String AbilitySystem::to_string() {
+	Dictionary dict;
+	dict["tags"] = tags;
+	dict["abilities"] = abilities;
+	dict["attributes"] = get_attribute_dict();
+	dict["events"] = events;
+	Array arr;
+	arr.append(dict);
+	return String("AbilitySystem{0}").format(arr);
 }

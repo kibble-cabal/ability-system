@@ -24,6 +24,8 @@ public:
 
 	void start(AbilitySystem *owner);
 	Status tick(AbilitySystem *owner, float delta);
+
+	virtual String to_string() override;
 };
 
 #endif

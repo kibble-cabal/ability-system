@@ -50,3 +50,7 @@ Status AbilityEvent::tick(AbilitySystem *owner, float delta) {
 
 	return status;
 }
+
+String AbilityEvent::to_string() {
+	return String("AbilityEvent({0})").format(variant_array(ability->get_ability_name()));
+}

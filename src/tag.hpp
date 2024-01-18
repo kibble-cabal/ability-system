@@ -4,6 +4,7 @@
 #include "core/io/resource.h"
 #include "macros.hpp"
 #include "scene/resources/texture.h"
+#include "utils.hpp"
 
 class Tag : public Resource {
 	GDCLASS(Tag, Resource);
@@ -32,12 +33,12 @@ public:
 		this->identifier = identifier;
 	}
 
-	bool operator==(Ref<Tag> other) {
-		return identifier == other->identifier;
-	}
-
 	GETSET_RESOURCE(StringName, identifier)
 	GETSET_RESOURCE(Color, ui_color);
+
+	virtual String to_string() override {
+		return String("Tag({0})").format(variant_array(identifier));
+	}
 };
 
 #endif

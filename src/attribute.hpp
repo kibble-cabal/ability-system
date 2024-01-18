@@ -3,11 +3,12 @@
 
 #include "core/io/resource.h"
 #include "macros.hpp"
+#include "utils.hpp"
 
 class Attribute : public Resource {
 	GDCLASS(Attribute, Resource);
 
-	friend class AttributeMap;
+	friend struct AttributeMap;
 
 private:
 	StringName attribute_name;
@@ -46,6 +47,10 @@ public:
 	GETSET_RESOURCE(float, max_value)
 	GETSET_RESOURCE(float, default_value)
 	GETSET_RESOURCE(Color, ui_color)
+
+	virtual String to_string() override {
+		return String("Attribute({0})").format(variant_array(attribute_name));
+	}
 };
 
 #endif

@@ -1,6 +1,8 @@
 
 #include "effect.h"
 
+#include "../utils.hpp"
+
 void Effect::_bind_methods() {
 	/* Bind virtual methods */
 	ClassDB::add_virtual_method(get_class_static(), MethodInfo("_start", OBJECT_PROP_INFO(AbilitySystem, owner)), true, PackedStringArray({ "owner" }));
@@ -37,4 +39,11 @@ void Effect::start(AbilitySystem *owner) {
 
 void Effect::finish(AbilitySystem *owner) {
 	_finish(owner);
+}
+
+String Effect::to_string() {
+	if (String(ui_name).is_empty()) {
+		return String("{0}()").format(variant_array(get_class_static()));
+	}
+	return String("{0}({1})").format(variant_array(get_class_static(), ui_name));
 }

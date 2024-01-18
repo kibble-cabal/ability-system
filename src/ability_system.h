@@ -11,15 +11,20 @@ namespace as_signal {
 static const auto EventBlocked = "ability_event_blocked";
 static const auto EventFinished = "ability_event_finished";
 static const auto EventStarted = "ability_event_started";
+static const auto TagGranted = "tag_granted";
+static const auto TagRevoked = "tag_revoked";
+static const auto AbilityGranted = "ability_granted";
+static const auto AbilityRevoked = "ability_revoked";
+static const auto AttributeGranted = "attribute_granted";
+static const auto AttributeRevoked = "attribute_revoked";
+static const auto AttributeValueChanged = "attribute_value_changed";
 }; //namespace as_signal
 
-class AbilitySystemState : public Resource {
-	GDCLASS(AbilitySystemState, Resource);
-
-	friend class AbilitySystem;
+class AbilitySystem : public Node {
+	GDCLASS(AbilitySystem, Node);
 
 private:
-	Ref<AttributeMap> attribute_map;
+	AttributeMap attribute_map = AttributeMap();
 	TypedArray<Tag> tags;
 	TypedArray<Ability> abilities;
 	TypedArray<AbilityEvent> events;
@@ -28,23 +33,17 @@ protected:
 	static void _bind_methods();
 
 public:
-	GETSET_RESOURCE(Ref<AttributeMap>, attribute_map)
-	GETSET_RESOURCE(TypedArray<Tag>, tags)
-	GETSET_RESOURCE(TypedArray<Ability>, abilities)
-	GETSET_RESOURCE(TypedArray<AbilityEvent>, events)
-};
+	GETSET(TypedArray<Tag>, tags)
+	GETSET(TypedArray<Ability>, abilities)
+	GETSET(TypedArray<AbilityEvent>, events)
 
-class AbilitySystem : public Node {
-	GDCLASS(AbilitySystem, Node);
+	Dictionary get_attribute_dict() const {
+		return attribute_map.get_attribute_dict();
+	}
 
-private:
-	Ref<AbilitySystemState> state;
-
-protected:
-	static void _bind_methods();
-
-public:
-	GETSET(Ref<AbilitySystemState>, state)
+	void set_attribute_dict(Dictionary value) {
+		attribute_map.set_attribute_dict(value);
+	}
 
 	void _notification(int notification);
 
@@ -74,6 +73,9 @@ public:
 	bool has_all_tags(TypedArray<Tag> tags_to_check) const;
 	void grant_tag(Ref<Tag> tag);
 	void revoke_tag(Ref<Tag> tag);
+
+	/* Other */
+	virtual String to_string() override;
 };
 
 #endif
