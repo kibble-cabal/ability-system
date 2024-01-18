@@ -1,7 +1,6 @@
 #ifndef AS_WAITEFFECT_HPP
 #define AS_WAITEFFECT_HPP
 
-#include "../attribute.hpp"
 #include "effect.h"
 
 class WaitEffect : public Effect {

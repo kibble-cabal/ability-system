@@ -9,6 +9,7 @@
 #include "src/attribute.hpp"
 #include "src/attribute_map.hpp"
 #include "src/effect/attribute_effect.h"
+#include "src/effect/tag_effect.h"
 #include "src/effect/wait_effect.hpp"
 
 void initialize_ability_system_module(ModuleInitializationLevel p_level) {
@@ -26,6 +27,7 @@ void initialize_ability_system_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<Effect>();
 	ClassDB::register_class<WaitEffect>();
 	ClassDB::register_class<AttributeEffect>();
+	ClassDB::register_class<TagEffect>();
 
 	ClassDB::register_class<AbilitySystem>();
 	ClassDB::register_class<AbilitySystemState>();

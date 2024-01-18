@@ -31,6 +31,7 @@ Status Effect::tick(AbilitySystem *owner, float delta) {
 }
 
 void Effect::start(AbilitySystem *owner) {
+	elapsed_time = 0;
 	_start(owner);
 }
 
