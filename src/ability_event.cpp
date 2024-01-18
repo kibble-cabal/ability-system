@@ -12,15 +12,21 @@ void AbilityEvent::_bind_methods() {
 }
 
 void AbilityEvent::start(AbilitySystem *owner) {
+	status = Status::READY;
 	effect_instances.clear();
 	for_each(this->ability->get_effects(), [this, owner](Ref<Effect> effect) {
 		Ref<Effect> instance = effect->duplicate(true);
 		effect_instances.append(instance);
 		instance->start(owner);
 	});
+	status = Status::RUNNING;
 }
 
 Status AbilityEvent::tick(AbilitySystem *owner, float delta) {
+	if (status != Status::RUNNING) {
+		return status;
+	}
+
 	std::vector<int> finished_effects;
 
 	// Tick every effect.
@@ -31,14 +37,16 @@ Status AbilityEvent::tick(AbilitySystem *owner, float delta) {
 	});
 
 	// Remove all finished effects.
-	for (int i : finished_effects)
-		effect_instances.remove_at(i);
+	for (auto it = finished_effects.rbegin(); it != finished_effects.rend(); ++it)
+		effect_instances.remove_at(*it);
 
 	// If all effects have been removed, the event is finished processing.
-	if (effect_instances.size() == 0) {
-		return Status::FINISHED;
-	}
+	if (effect_instances.size() == 0)
+		status = Status::FINISHED;
 
 	// Otherwise, it is still running.
-	return Status::RUNNING;
+	else
+		status = Status::RUNNING;
+
+	return status;
 }

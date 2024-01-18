@@ -13,6 +13,7 @@ class AbilityEvent : public Resource {
 private:
 	Ref<Ability> ability;
 	TypedArray<Effect> effect_instances;
+	Status status;
 
 protected:
 	static void _bind_methods();
