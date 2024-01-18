@@ -8,7 +8,7 @@
 struct AttributeHasher {
 	static _FORCE_INLINE_ uint32_t hash(const Ref<Attribute> &attribute) {
 		if (attribute.is_valid())
-			return hash_one_uint64((uint64_t)attribute->get_attribute_name().hash());
+			return hash_one_uint64((uint64_t)attribute->get_identifier().hash());
 		return hash_one_uint64((uint64_t)attribute.operator->());
 	}
 };
@@ -16,7 +16,7 @@ struct AttributeHasher {
 struct AttributeComparator {
 	static bool compare(const Ref<Attribute> &lhs, const Ref<Attribute> &rhs) {
 		if (lhs.is_valid() && rhs.is_valid())
-			return lhs->get_attribute_name() == rhs->get_attribute_name();
+			return lhs->get_identifier() == rhs->get_identifier();
 		if (lhs.is_valid() || rhs.is_valid())
 			return false;
 		return true;

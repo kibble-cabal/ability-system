@@ -7,9 +7,9 @@
 	<tutorials>
 	</tutorials>
 	<members>
-		<member name="ability_name" type="StringName" setter="set_ability_name" getter="get_ability_name" default="&amp;&quot;&quot;">
-		</member>
 		<member name="effects" type="Effect[]" setter="set_effects" getter="get_effects" default="[]">
+		</member>
+		<member name="identifier" type="StringName" setter="set_identifier" getter="get_identifier" default="&amp;&quot;&quot;">
 		</member>
 		<member name="tags_blocking" type="Tag[]" setter="set_tags_blocking" getter="get_tags_blocking" default="[]">
 		</member>

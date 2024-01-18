@@ -15,7 +15,7 @@ class Ability : public Resource {
 	GDCLASS(Ability, Resource);
 
 private:
-	StringName ability_name;
+	StringName identifier;
 
 	/* Tags */
 	TypedArray<Tag> tags_blocking;
@@ -30,14 +30,14 @@ private:
 protected:
 	static void _bind_methods() {
 		/* Bind methods */
-		BIND_GETSET(Ability, ability_name);
+		BIND_GETSET(Ability, identifier);
 		BIND_GETSET(Ability, tags_blocking);
 		BIND_GETSET(Ability, tags_required);
 		BIND_GETSET(Ability, effects);
 		BIND_GETSET(Ability, ui_color);
 
 		/* Bind properties */
-		PROP(Variant::STRING_NAME, ability_name);
+		PROP(Variant::STRING_NAME, identifier);
 
 		ADD_GROUP("Tags", "tags_");
 		ARRAY_PROP(tags_blocking, RESOURCE_TYPE_HINT("Tag"));
@@ -51,7 +51,7 @@ protected:
 	}
 
 public:
-	GETSET_RESOURCE(StringName, ability_name)
+	GETSET_RESOURCE(StringName, identifier)
 	GETSET_RESOURCE(TypedArray<Tag>, tags_blocking)
 	GETSET_RESOURCE(TypedArray<Tag>, tags_required)
 	GETSET_RESOURCE(TypedArray<Effect>, effects)
@@ -59,7 +59,7 @@ public:
 	GETSET_RESOURCE(Color, ui_color)
 
 	virtual String to_string() override {
-		return String("Ability({0})").format(variant_array(ability_name));
+		return String("Ability({0})").format(variant_array(identifier));
 	}
 };
 
