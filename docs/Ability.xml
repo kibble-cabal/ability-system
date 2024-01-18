@@ -1,29 +1,49 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<class name="Ability" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<class name="Ability" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../../../doc/class.xsd">
 	<brief_description>
+		An Ability defines an action or skill.
 	</brief_description>
 	<description>
+		An Ability defines an action or skill that a node can enact. A few examples might be:
+		• Casting a spell
+		• Shooting a gun
+		• Picking up an object
 	</description>
 	<tutorials>
 	</tutorials>
 	<members>
-		<member name="effect_mode" type="int" setter="set_effect_mode" getter="get_effect_mode" default="0">
+		<member name="effect_mode" type="int" setter="set_effect_mode" getter="get_effect_mode"
+			default="0">
+			Defines how the [member effects] will be ticked once this ability is activated. See [method Effect._tick] for more detail.
 		</member>
-		<member name="effects" type="Effect[]" setter="set_effects" getter="get_effects" default="[]">
+		<member name="effects" type="Effect[]" setter="set_effects" getter="get_effects"
+			default="[]">
+			Defines a list of [Effect]s to be ran upon successful activation of this ability.
 		</member>
-		<member name="identifier" type="StringName" setter="set_identifier" getter="get_identifier" default="&amp;&quot;&quot;">
+		<member name="identifier" type="StringName" setter="set_identifier" getter="get_identifier"
+			default="&amp;&quot;&quot;">
+			Defines a name to distinguish this ability in the inspector/debug tools.
 		</member>
-		<member name="tags_blocking" type="Tag[]" setter="set_tags_blocking" getter="get_tags_blocking" default="[]">
+		<member name="tags_blocking" type="Tag[]" setter="set_tags_blocking"
+			getter="get_tags_blocking" default="[]">
+			Used When activating this ability on an [AbilitySystem]. If the [AbilitySystem] contains any of these tags in [member AbilitySystem.tags], the ability cannot be activated.
 		</member>
-		<member name="tags_required" type="Tag[]" setter="set_tags_required" getter="get_tags_required" default="[]">
+		<member name="tags_required" type="Tag[]" setter="set_tags_required"
+			getter="get_tags_required" default="[]">
+			Used When activating this ability on an [AbilitySystem]. The [AbilitySystem] must contain all of these tags in [member AbilitySystem.tags] to be activated.
 		</member>
-		<member name="ui_color" type="Color" setter="set_ui_color" getter="get_ui_color" default="Color(0, 0, 0, 1)">
+		<member name="ui_color" type="Color" setter="set_ui_color" getter="get_ui_color"
+			default="Color(0, 0, 0, 1)">
+			Defines a color to quickly distinguish this ability in the inspector/debug tools.
 		</member>
 	</members>
 	<constants>
 		<constant name="PARALLEL" value="1" enum="EffectMode">
+			Effects will be run in parallel – all effects will ticked once per frame.
 		</constant>
 		<constant name="SEQUENTIAL" value="2" enum="EffectMode">
+			Effects will be run sequentially – the first effect in [member effects] will be ticked until it's finished, then the second effect, etc.
 		</constant>
 	</constants>
 </class>
