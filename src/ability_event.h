@@ -18,6 +18,9 @@ private:
 protected:
 	static void _bind_methods();
 
+	void tick_parallel(AbilitySystem *owner, float delta);
+	void tick_sequential(AbilitySystem *owner, float delta);
+
 public:
 	GETSET_RESOURCE(Ref<Ability>, ability)
 	GETSET_RESOURCE(TypedArray<Effect>, effect_instances)

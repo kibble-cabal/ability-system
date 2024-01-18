@@ -23,22 +23,17 @@ void AbilityEvent::start(AbilitySystem *owner) {
 }
 
 Status AbilityEvent::tick(AbilitySystem *owner, float delta) {
-	if (status != Status::RUNNING) {
+	if (status != Status::RUNNING)
 		return status;
+
+	switch (ability->effect_mode) {
+		case EffectMode::PARALLEL:
+			tick_parallel(owner, delta);
+			break;
+		case EffectMode::SEQUENTIAL:
+			tick_sequential(owner, delta);
+			break;
 	}
-
-	std::vector<int> finished_effects;
-
-	// Tick every effect.
-	for_each_i(effect_instances, [&owner, delta, &finished_effects](Ref<Effect> effect, int i) {
-		// Make a list of all finished effects (succeeded or failed).
-		if (effect->tick(owner, delta) == Status::FINISHED)
-			finished_effects.push_back(i);
-	});
-
-	// Remove all finished effects.
-	for (auto it = finished_effects.rbegin(); it != finished_effects.rend(); ++it)
-		effect_instances.remove_at(*it);
 
 	// If all effects have been removed, the event is finished processing.
 	if (effect_instances.size() == 0)
@@ -49,6 +44,31 @@ Status AbilityEvent::tick(AbilitySystem *owner, float delta) {
 		status = Status::RUNNING;
 
 	return status;
+}
+
+void AbilityEvent::tick_parallel(AbilitySystem *owner, float delta) {
+	std::vector<int> finished_effects;
+
+	// Tick every effect.
+	for_each_i(effect_instances, [&owner, delta, &finished_effects](Ref<Effect> effect, int i) {
+		// Make a list of all finished effects.
+		if (effect->tick(owner, delta) == Status::FINISHED)
+			finished_effects.push_back(i);
+	});
+
+	// Remove all finished effects.
+	for (auto it = finished_effects.rbegin(); it != finished_effects.rend(); ++it)
+		effect_instances.remove_at(*it);
+}
+
+void AbilityEvent::tick_sequential(AbilitySystem *owner, float delta) {
+	// Tick the first effect, if it exists.
+	if (effect_instances.size()) {
+		Status effect_status = ((Ref<Effect>)effect_instances[0])->tick(owner, delta);
+		// If the first effect is finished, remove it from the list.
+		if (effect_status == Status::FINISHED)
+			effect_instances.pop_front();
+	}
 }
 
 String AbilityEvent::to_string() {
