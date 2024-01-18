@@ -9,6 +9,7 @@ void AbilitySystem::_bind_methods() {
 	BIND_GETSET(AbilitySystem, abilities);
 	BIND_GETSET(AbilitySystem, events);
 	BIND_GETSET(AbilitySystem, attribute_dict);
+	BIND_GETSET(AbilitySystem, update_mode);
 
 	ClassDB::bind_method(D_METHOD("has_attribute", "attribute"), &AbilitySystem::has_attribute);
 	ClassDB::bind_method(D_METHOD("grant_attribute", "attribute"), &AbilitySystem::grant_attribute);
@@ -32,6 +33,7 @@ void AbilitySystem::_bind_methods() {
 	ARRAY_PROP(abilities, RESOURCE_TYPE_HINT("Ability"));
 	ARRAY_PROP(events, RESOURCE_TYPE_HINT("AbilityEvent"));
 	ADD_PROPERTY(PropertyInfo(Variant::DICTIONARY, "attributes", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NO_EDITOR), "set_attribute_dict", "get_attribute_dict");
+	ClassDB::add_property(get_class_static(), PropertyInfo(Variant::INT, "update_mode", PROPERTY_HINT_ENUM, UpdateModePropertyHint), "set_update_mode", "get_update_mode");
 
 	/* Bind signals */
 	ADD_SIGNAL(MethodInfo(as_signal::EventBlocked, OBJECT_PROP_INFO(Ability, ability)));
@@ -47,10 +49,24 @@ void AbilitySystem::_bind_methods() {
 }
 
 void AbilitySystem::_notification(int notification) {
+	if (Engine::get_singleton()->is_editor_hint())
+		return;
 	switch (notification) {
-		case NOTIFICATION_PHYSICS_PROCESS:
-			Variant delta = get_process_delta_time();
-			update(delta);
+		case NOTIFICATION_READY:
+			// Start processing stored events.
+			update_process_mode();
+			break;
+		case NOTIFICATION_INTERNAL_PHYSICS_PROCESS:
+			if (update_mode == UpdateMode::PHYSICS) {
+				Variant delta = get_process_delta_time();
+				update(delta);
+			}
+			break;
+		case NOTIFICATION_INTERNAL_PROCESS:
+			if (update_mode == UpdateMode::PROCESS) {
+				Variant delta = get_process_delta_time();
+				update(delta);
+			}
 			break;
 	}
 }
@@ -70,6 +86,11 @@ void AbilitySystem::update(float delta) {
 	// Remove all finished events.
 	for (int i : finished_events)
 		events.remove_at(i);
+
+	// Stop processing.
+	if (events.is_empty()) {
+		set_physics_process_internal(false);
+	}
 }
 
 /*************************
@@ -146,6 +167,8 @@ Ref<AbilityEvent> AbilitySystem::activate(Ref<Ability> ability) {
 		events.append(event);
 		event->set_ability(ability);
 		event->start(this);
+		emit_signal(as_signal::EventStarted, event);
+		update_process_mode();
 		return event;
 	}
 	emit_signal(as_signal::EventBlocked, ability);

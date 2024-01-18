@@ -115,6 +115,8 @@
 		</member>
 		<member name="tags" type="Tag[]" setter="set_tags" getter="get_tags" default="[]">
 		</member>
+		<member name="update_mode" type="int" setter="set_update_mode" getter="get_update_mode" default="1">
+		</member>
 	</members>
 	<signals>
 		<signal name="ability_event_blocked">

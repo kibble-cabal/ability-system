@@ -20,6 +20,14 @@ static const auto AttributeRevoked = "attribute_revoked";
 static const auto AttributeValueChanged = "attribute_value_changed";
 }; //namespace as_signal
 
+enum UpdateMode {
+	PHYSICS = 1,
+	PROCESS = 2,
+	DISABLED = 0
+};
+
+static const auto UpdateModePropertyHint = "Physics:1,Process:2,Disabled:0";
+
 class AbilitySystem : public Node {
 	GDCLASS(AbilitySystem, Node);
 
@@ -28,6 +36,7 @@ private:
 	TypedArray<Tag> tags;
 	TypedArray<Ability> abilities;
 	TypedArray<AbilityEvent> events;
+	UpdateMode update_mode = UpdateMode::PHYSICS;
 
 protected:
 	static void _bind_methods();
@@ -36,6 +45,34 @@ public:
 	GETSET(TypedArray<Tag>, tags)
 	GETSET(TypedArray<Ability>, abilities)
 	GETSET(TypedArray<AbilityEvent>, events)
+
+	int get_update_mode() const {
+		return (int)update_mode;
+	}
+
+	void set_update_mode(int value) {
+		update_mode = (UpdateMode)value;
+		update_process_mode();
+	}
+
+	void update_process_mode() {
+		if (!is_ready() || Engine::get_singleton()->is_editor_hint())
+			return;
+		set_process_internal(false);
+		set_physics_process_internal(false);
+		if (events.size()) {
+			switch (update_mode) {
+				case UpdateMode::PHYSICS:
+					set_physics_process_internal(true);
+					break;
+				case UpdateMode::PROCESS:
+					set_process_input(true);
+					break;
+				default:
+					return;
+			}
+		}
+	}
 
 	Dictionary get_attribute_dict() const {
 		return attribute_map.get_attribute_dict();
