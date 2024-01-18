@@ -107,13 +107,11 @@ float AbilitySystem::get_attribute_value(Ref<Attribute> attribute) const {
 
 void AbilitySystem::set_attribute_value(Ref<Attribute> attribute, float value) {
 	ERR_FAIL_NULL(state);
-	if (has_attribute(attribute)) {
-		state->attribute_map->set_value(attribute, value);
-	}
+	state->attribute_map->try_set_value(attribute, value);
 }
 
 void AbilitySystem::modify_attribute_value(Ref<Attribute> attribute, float by_amount) {
-	set_attribute_value(attribute, get_attribute_value(attribute) + by_amount);
+	state->attribute_map->try_set_value(attribute, state->attribute_map->try_get_value(attribute) + by_amount);
 }
 
 /***********************

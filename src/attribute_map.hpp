@@ -44,6 +44,7 @@ public:
 			Ref<Attribute> key = value.get_key_at_index(i);
 			attributes.insert(std::pair(key, value[key]));
 		}
+		emit_changed();
 	}
 
 	void add(Ref<Attribute> attribute) {
@@ -82,20 +83,20 @@ public:
 
 	float get_value(Ref<Attribute> attribute) const {
 		ERR_FAIL_COND_V_MSG(!has(attribute), 0.0, "Cannot get; map is missing attribute.");
-		try_get_value(attribute);
+		return try_get_value(attribute);
 	}
 
 	void set_value(Ref<Attribute> attribute, float value) {
 		ERR_FAIL_COND_MSG(!has(attribute), "Cannot set; map is missing attribute.");
-		try_set_value(attribute, value);
+		return try_set_value(attribute, value);
 	}
 
 	void try_set_value(Ref<Attribute> attribute, float value) {
 		for (auto pair : attributes) {
 			if (pair.first->get_attribute_name() == attribute->get_attribute_name()) {
-				attributes[pair.first] = value;
+				attributes[pair.first] = CLAMP(value, attribute->min_value, attribute->max_value);
 				emit_changed();
-				break;
+				return;
 			}
 		}
 	}
