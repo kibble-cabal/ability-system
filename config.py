@@ -27,4 +27,9 @@ def get_doc_classes():
         "WaitEffect",
         "TagEffect",
     ]
-    return core_classes + effect_classes
+    editor_classes = [
+        "AbilityViewer",
+        "TagViewer",
+        "AttributeViewer",
+    ]
+    return core_classes + effect_classes + editor_classes

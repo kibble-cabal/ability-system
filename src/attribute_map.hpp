@@ -23,7 +23,7 @@ struct AttributeComparator {
 	}
 };
 
-struct AttributeMap {
+class AttributeMap {
 public:
 	HashMap<Ref<Attribute>, float, AttributeHasher, AttributeComparator> attributes;
 
@@ -65,6 +65,12 @@ public:
 	float get_value(Ref<Attribute> attribute) const {
 		ERR_FAIL_COND_V_MSG(!has(attribute), attribute->default_value, "Cannot get; map is missing attribute.");
 		return try_get_value(attribute);
+	}
+
+	/* Returns attribute's value normalized between 0 and 1. */
+	float get_percent(Ref<Attribute> attribute) const {
+		float value = get_value(attribute);
+		return (value - attribute->min_value) / (attribute->max_value - attribute->min_value);
 	}
 
 	void set_value(Ref<Attribute> attribute, float value) {

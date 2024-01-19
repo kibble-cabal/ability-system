@@ -51,4 +51,9 @@ Array variant_array(Args... args) {
 	return arr;
 }
 
+void try_connect(Object *obj, String signal_name, Callable callable) {
+	if (!obj->is_connected(signal_name, callable))
+		obj->connect(signal_name, callable);
+};
+
 #endif

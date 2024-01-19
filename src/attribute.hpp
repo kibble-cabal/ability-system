@@ -8,7 +8,7 @@
 class Attribute : public Resource {
 	GDCLASS(Attribute, Resource);
 
-	friend struct AttributeMap;
+	friend class AttributeMap;
 
 private:
 	StringName identifier;
