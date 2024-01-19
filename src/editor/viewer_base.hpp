@@ -62,7 +62,7 @@ public:
 	GETSET(NodePath, ability_system_path)
 
 	AbilitySystem *get_ability_system() const {
-		if (is_inside_tree())
+		if (is_inside_tree() && has_node(ability_system_path))
 			return Object::cast_to<AbilitySystem>(get_node(ability_system_path));
 		return nullptr;
 	}
