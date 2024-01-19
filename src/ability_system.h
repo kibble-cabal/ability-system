@@ -5,24 +5,8 @@
 #include "ability_event.h"
 #include "attribute_map.hpp"
 #include "scene/main/node.h"
+#include "signal.hpp"
 #include "tag.hpp"
-
-namespace as_signal {
-static const auto EventBlocked = "ability_event_blocked";
-static const auto EventFinished = "ability_event_finished";
-static const auto EventStarted = "ability_event_started";
-static const auto EventsChanged = "events_changed";
-static const auto TagGranted = "tag_granted";
-static const auto TagRevoked = "tag_revoked";
-static const auto TagsChanged = "tags_changed";
-static const auto AbilityGranted = "ability_granted";
-static const auto AbilityRevoked = "ability_revoked";
-static const auto AbilitiesChanged = "abilities_changed";
-static const auto AttributeGranted = "attribute_granted";
-static const auto AttributeRevoked = "attribute_revoked";
-static const auto AttributeValueChanged = "attribute_value_changed";
-static const auto AttributesChanged = "attributes_changed";
-}; //namespace as_signal
 
 enum UpdateMode {
 	PHYSICS = 1,

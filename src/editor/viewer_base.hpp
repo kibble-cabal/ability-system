@@ -20,6 +20,8 @@ protected:
 		ClassDB::bind_method(D_METHOD("_attributes_changed"), &AbilitySystemViewerBase::_attributes_changed);
 		ClassDB::bind_method(D_METHOD("_tags_changed"), &AbilitySystemViewerBase::_tags_changed);
 		ClassDB::bind_method(D_METHOD("_events_changed"), &AbilitySystemViewerBase::_events_changed);
+		ClassDB::bind_method(D_METHOD("_effects_changed"), &AbilitySystemViewerBase::_effects_changed);
+		ClassDB::bind_method(D_METHOD("_event_blocked"), &AbilitySystemViewerBase::_event_blocked);
 	}
 
 	/// @brief Connects all existing tags to prompt a redraw when any property is changed.
@@ -76,6 +78,8 @@ public:
 					try_connect(ability_system, as_signal::AttributesChanged, callable_mp(this, &AbilitySystemViewerBase::_attributes_changed));
 					try_connect(ability_system, as_signal::TagsChanged, callable_mp(this, &AbilitySystemViewerBase::_tags_changed));
 					try_connect(ability_system, as_signal::EventsChanged, callable_mp(this, &AbilitySystemViewerBase::_events_changed));
+					try_connect(ability_system, as_signal::EffectsChanged, callable_mp(this, &AbilitySystemViewerBase::_effects_changed));
+					try_connect(ability_system, as_signal::EventBlocked, callable_mp(this, &AbilitySystemViewerBase::_event_blocked));
 					connect_to_tags();
 					connect_to_attributes();
 					connect_to_events();
@@ -111,6 +115,15 @@ public:
 
 	void _events_changed() {
 		connect_to_events();
+		queue_redraw();
+	}
+
+	void _effects_changed() {
+		connect_to_events();
+		queue_redraw();
+	}
+
+	void _event_blocked() {
 		queue_redraw();
 	}
 

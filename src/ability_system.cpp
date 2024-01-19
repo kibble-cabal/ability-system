@@ -45,6 +45,7 @@ void AbilitySystem::_bind_methods() {
 	ADD_SIGNAL(MethodInfo(as_signal::EventStarted, OBJECT_PROP_INFO(AbilityEvent, event)));
 	ADD_SIGNAL(MethodInfo(as_signal::EventFinished, OBJECT_PROP_INFO(AbilityEvent, event)));
 	ADD_SIGNAL(MethodInfo(as_signal::EventsChanged));
+	ADD_SIGNAL(MethodInfo(as_signal::EffectsChanged));
 	ADD_SIGNAL(MethodInfo(as_signal::AttributeGranted, OBJECT_PROP_INFO(Attribute, attribute)));
 	ADD_SIGNAL(MethodInfo(as_signal::AttributeRevoked, OBJECT_PROP_INFO(Attribute, attribute)));
 	ADD_SIGNAL(MethodInfo(as_signal::AttributeValueChanged, OBJECT_PROP_INFO(Attribute, attribute), PropertyInfo(Variant::FLOAT, "value")));
@@ -89,7 +90,9 @@ void AbilitySystem::update(float delta) {
 		// Make a list of finished events.
 		if (event->tick(this, delta) == Status::FINISHED) {
 			finished_events.push_back(i);
+			// Emit signals for finished events
 			emit_signal(as_signal::EventFinished, event);
+			emit_signal(as_signal::EventsChanged);
 		}
 	});
 

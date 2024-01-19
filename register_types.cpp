@@ -15,6 +15,7 @@
 // Editor
 #include "src/editor/ability_viewer.hpp"
 #include "src/editor/attribute_viewer.hpp"
+#include "src/editor/event_viewer.hpp"
 #include "src/editor/tag_viewer.hpp"
 
 void initialize_ability_system_module(ModuleInitializationLevel p_level) {
@@ -35,6 +36,7 @@ void initialize_ability_system_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<TagViewer>();
 	ClassDB::register_class<AttributeViewer>();
 	ClassDB::register_class<AbilityViewer>();
+	ClassDB::register_class<EventViewer>();
 }
 
 void uninitialize_ability_system_module(ModuleInitializationLevel p_level) {

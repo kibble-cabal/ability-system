@@ -11,24 +11,28 @@ public:
 	void _tags_changed() {}
 	void _abilities_changed() {}
 	void _events_changed() {}
+	void _effects_changed() {}
+	void _event_blocked() {}
 
 	void _draw(AbilitySystem *ability_system) override {
-		RenderProgressContainer container;
+		RenderContainer container;
 		container.canvas = this;
 		container.max_size = get_size();
+		container.style = LabelStyle::text;
 		auto dict = ability_system->get_attribute_dict();
 		auto keys = dict.keys();
 		for (int i = 0; i < keys.size(); i++) {
 			Ref<Attribute> attribute = keys[i];
 			float percent = ability_system->get_attribute_map()->get_percent(attribute);
-			container.draw_progress(attribute->get_identifier(), percent, attribute->get_ui_color());
+			container.add_progress(attribute->get_identifier(), percent, attribute->get_ui_color());
 		}
+		container.draw();
 	}
 
 	Vector2 get_minimum_size() const override {
 		if (get_ability_system() == nullptr)
 			return Vector2();
-		RenderProgressContainer container;
+		RenderContainer container;
 		container.max_size = Vector2(get_size().x, 0);
 		auto dict = get_ability_system()->get_attribute_dict();
 		auto keys = dict.keys();

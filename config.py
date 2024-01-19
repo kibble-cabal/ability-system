@@ -31,5 +31,6 @@ def get_doc_classes():
         "AbilityViewer",
         "TagViewer",
         "AttributeViewer",
+        "EventViewer",
     ]
     return core_classes + effect_classes + editor_classes

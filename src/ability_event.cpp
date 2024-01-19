@@ -5,10 +5,16 @@
 #include "utils.hpp"
 
 void AbilityEvent::_bind_methods() {
+	/* Bind methods */
 	BIND_GETSET(AbilityEvent, ability);
 	BIND_GETSET(AbilityEvent, effect_instances);
+
+	/* Bind properties */
 	OBJECT_PROP(Ability, ability);
 	ARRAY_PROP(effect_instances, RESOURCE_TYPE_HINT("Effect"));
+
+	/* Bind signals */
+	ADD_SIGNAL(MethodInfo(as_signal::EffectFinished, OBJECT_PROP_INFO(Effect, effect)));
 }
 
 void AbilityEvent::start(AbilitySystem *owner) {
@@ -50,10 +56,12 @@ void AbilityEvent::tick_parallel(AbilitySystem *owner, float delta) {
 	std::vector<int> finished_effects;
 
 	// Tick every effect.
-	for_each_i(effect_instances, [&owner, delta, &finished_effects](Ref<Effect> effect, int i) {
+	for_each_i(effect_instances, [&](Ref<Effect> effect, int i) {
 		// Make a list of all finished effects.
-		if (effect->tick(owner, delta) == Status::FINISHED)
+		if (effect->tick(owner, delta) == Status::FINISHED) {
 			finished_effects.push_back(i);
+			emit_signal(as_signal::EffectFinished, effect);
+		}
 	});
 
 	// Remove all finished effects.
@@ -64,10 +72,14 @@ void AbilityEvent::tick_parallel(AbilitySystem *owner, float delta) {
 void AbilityEvent::tick_sequential(AbilitySystem *owner, float delta) {
 	// Tick the first effect, if it exists.
 	if (effect_instances.size()) {
-		Status effect_status = ((Ref<Effect>)effect_instances[0])->tick(owner, delta);
+		Ref<Effect> effect = effect_instances[0];
+		Status effect_status = effect->tick(owner, delta);
 		// If the first effect is finished, remove it from the list.
-		if (effect_status == Status::FINISHED)
+		if (effect_status == Status::FINISHED) {
 			effect_instances.pop_front();
+			emit_signal(as_signal::EffectFinished, effect);
+			owner->emit_signal(as_signal::EffectsChanged);
+		}
 	}
 }
 
