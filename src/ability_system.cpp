@@ -44,13 +44,17 @@ void AbilitySystem::_bind_methods() {
 	ADD_SIGNAL(MethodInfo(as_signal::EventBlocked, OBJECT_PROP_INFO(Ability, ability)));
 	ADD_SIGNAL(MethodInfo(as_signal::EventStarted, OBJECT_PROP_INFO(AbilityEvent, event)));
 	ADD_SIGNAL(MethodInfo(as_signal::EventFinished, OBJECT_PROP_INFO(AbilityEvent, event)));
+	ADD_SIGNAL(MethodInfo(as_signal::EventsChanged));
 	ADD_SIGNAL(MethodInfo(as_signal::AttributeGranted, OBJECT_PROP_INFO(Attribute, attribute)));
 	ADD_SIGNAL(MethodInfo(as_signal::AttributeRevoked, OBJECT_PROP_INFO(Attribute, attribute)));
 	ADD_SIGNAL(MethodInfo(as_signal::AttributeValueChanged, OBJECT_PROP_INFO(Attribute, attribute), PropertyInfo(Variant::FLOAT, "value")));
+	ADD_SIGNAL(MethodInfo(as_signal::AttributesChanged));
 	ADD_SIGNAL(MethodInfo(as_signal::AbilityGranted, OBJECT_PROP_INFO(Ability, ability)));
 	ADD_SIGNAL(MethodInfo(as_signal::AbilityRevoked, OBJECT_PROP_INFO(Ability, ability)));
+	ADD_SIGNAL(MethodInfo(as_signal::AbilitiesChanged));
 	ADD_SIGNAL(MethodInfo(as_signal::TagGranted, OBJECT_PROP_INFO(Tag, tag)));
 	ADD_SIGNAL(MethodInfo(as_signal::TagRevoked, OBJECT_PROP_INFO(Tag, tag)));
+	ADD_SIGNAL(MethodInfo(as_signal::TagsChanged));
 }
 
 void AbilitySystem::_notification(int notification) {
@@ -73,6 +77,7 @@ void AbilitySystem::_notification(int notification) {
 				update(delta);
 			}
 			break;
+			// TODO: notification when tags/etc deleted in editor?
 	}
 }
 
@@ -110,6 +115,7 @@ void AbilitySystem::grant_attribute(Ref<Attribute> attribute) {
 	if (!has_attribute(attribute)) {
 		attribute_map.add(attribute);
 		emit_signal(as_signal::AttributeGranted, attribute);
+		emit_signal(as_signal::AttributesChanged);
 	}
 }
 
@@ -117,6 +123,7 @@ void AbilitySystem::revoke_attribute(Ref<Attribute> attribute) {
 	if (has_attribute(attribute)) {
 		attribute_map.remove(attribute);
 		emit_signal(as_signal::AttributeRevoked, attribute);
+		emit_signal(as_signal::AttributesChanged);
 	}
 }
 
@@ -131,6 +138,7 @@ void AbilitySystem::set_attribute_value(Ref<Attribute> attribute, float value) {
 	if (has_attribute(attribute)) {
 		attribute_map.try_set_value(attribute, value);
 		emit_signal(as_signal::AttributeValueChanged, attribute, value);
+		emit_signal(as_signal::AttributesChanged);
 	}
 }
 
@@ -152,6 +160,7 @@ void AbilitySystem::grant_ability(Ref<Ability> ability) {
 	if (!has_ability(ability)) {
 		abilities.append(ability);
 		emit_signal(as_signal::AbilityGranted, ability);
+		emit_signal(as_signal::AbilitiesChanged);
 	}
 }
 
@@ -159,6 +168,7 @@ void AbilitySystem::revoke_ability(Ref<Ability> ability) {
 	if (has_ability(ability)) {
 		abilities.erase(ability);
 		emit_signal(as_signal::AbilityRevoked, ability);
+		emit_signal(as_signal::AbilitiesChanged);
 	}
 }
 
@@ -173,10 +183,12 @@ Ref<AbilityEvent> AbilitySystem::activate(Ref<Ability> ability) {
 		event->set_ability(ability);
 		event->start(this);
 		emit_signal(as_signal::EventStarted, event);
+		emit_signal(as_signal::EventsChanged);
 		update_process_mode();
 		return event;
 	}
 	emit_signal(as_signal::EventBlocked, ability);
+	emit_signal(as_signal::EventsChanged);
 	return nullptr;
 }
 
@@ -206,6 +218,7 @@ void AbilitySystem::grant_tag(Ref<Tag> tag) {
 	if (!has_tag(tag)) {
 		tags.append(tag);
 		emit_signal(as_signal::TagGranted, tag);
+		emit_signal(as_signal::TagsChanged);
 	}
 }
 
@@ -213,6 +226,7 @@ void AbilitySystem::revoke_tag(Ref<Tag> tag) {
 	if (has_tag(tag)) {
 		tags.erase(tag);
 		emit_signal(as_signal::TagRevoked, tag);
+		emit_signal(as_signal::TagsChanged);
 	}
 }
 

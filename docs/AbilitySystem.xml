@@ -119,6 +119,10 @@
 		</member>
 	</members>
 	<signals>
+		<signal name="abilities_changed">
+			<description>
+			</description>
+		</signal>
 		<signal name="ability_event_blocked">
 			<param index="0" name="ability" type="Ability" />
 			<description>
@@ -160,6 +164,14 @@
 			<description>
 			</description>
 		</signal>
+		<signal name="attributes_changed">
+			<description>
+			</description>
+		</signal>
+		<signal name="events_changed">
+			<description>
+			</description>
+		</signal>
 		<signal name="tag_granted">
 			<param index="0" name="tag" type="Tag" />
 			<description>
@@ -167,6 +179,10 @@
 		</signal>
 		<signal name="tag_revoked">
 			<param index="0" name="tag" type="Tag" />
+			<description>
+			</description>
+		</signal>
+		<signal name="tags_changed">
 			<description>
 			</description>
 		</signal>

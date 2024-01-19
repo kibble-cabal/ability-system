@@ -11,13 +11,17 @@ namespace as_signal {
 static const auto EventBlocked = "ability_event_blocked";
 static const auto EventFinished = "ability_event_finished";
 static const auto EventStarted = "ability_event_started";
+static const auto EventsChanged = "events_changed";
 static const auto TagGranted = "tag_granted";
 static const auto TagRevoked = "tag_revoked";
+static const auto TagsChanged = "tags_changed";
 static const auto AbilityGranted = "ability_granted";
 static const auto AbilityRevoked = "ability_revoked";
+static const auto AbilitiesChanged = "abilities_changed";
 static const auto AttributeGranted = "attribute_granted";
 static const auto AttributeRevoked = "attribute_revoked";
 static const auto AttributeValueChanged = "attribute_value_changed";
+static const auto AttributesChanged = "attributes_changed";
 }; //namespace as_signal
 
 enum UpdateMode {
@@ -42,9 +46,13 @@ protected:
 	static void _bind_methods();
 
 public:
-	GETSET(TypedArray<Tag>, tags)
-	GETSET(TypedArray<Ability>, abilities)
-	GETSET(TypedArray<AbilityEvent>, events)
+	GETTER(TypedArray<Tag>, tags)
+	GETTER(TypedArray<Ability>, abilities)
+	GETTER(TypedArray<AbilityEvent>, events)
+
+	AttributeMap *get_attribute_map() {
+		return &attribute_map;
+	}
 
 	int get_update_mode() const {
 		return (int)update_mode;
@@ -74,20 +82,19 @@ public:
 		}
 	}
 
-	Dictionary get_attribute_dict() const {
-		return attribute_map.get_attribute_dict();
-	}
-
-	void set_attribute_dict(Dictionary value) {
-		attribute_map.set_attribute_dict(value);
-	}
-
 	void _notification(int notification);
 
 	void update(float delta);
 
 	/* Attribute methods */
 
+	Dictionary get_attribute_dict() const {
+		return attribute_map.get_attribute_dict();
+	}
+	void set_attribute_dict(Dictionary value) {
+		attribute_map.set_attribute_dict(value);
+		emit_signal(as_signal::AttributesChanged);
+	}
 	bool has_attribute(Ref<Attribute> attribute) const;
 	void grant_attribute(Ref<Attribute> attribute);
 	void revoke_attribute(Ref<Attribute> attribute);
@@ -97,14 +104,26 @@ public:
 
 	/* Ability methods */
 
+	void set_abilities(TypedArray<Ability> abilities) {
+		this->abilities = abilities;
+		emit_signal(as_signal::AbilitiesChanged);
+	}
 	bool can_activate(Ref<Ability> ability) const;
 	bool has_ability(Ref<Ability> ability_to_check) const;
 	void grant_ability(Ref<Ability> ability);
 	void revoke_ability(Ref<Ability> ability);
 	Ref<AbilityEvent> activate(Ref<Ability> ability);
+	void set_events(TypedArray<AbilityEvent> events) {
+		this->events = events;
+		emit_signal(as_signal::EventsChanged);
+	}
 
 	/* Tag methods */
 
+	void set_tags(TypedArray<Tag> tags) {
+		this->tags = tags;
+		emit_signal(as_signal::TagsChanged);
+	}
 	bool has_tag(Ref<Tag> tag_to_check) const;
 	bool has_some_tags(TypedArray<Tag> tags_to_check) const;
 	bool has_all_tags(TypedArray<Tag> tags_to_check) const;
