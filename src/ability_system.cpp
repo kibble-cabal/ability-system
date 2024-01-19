@@ -130,7 +130,7 @@ float AbilitySystem::get_attribute_value(Ref<Attribute> attribute) const {
 void AbilitySystem::set_attribute_value(Ref<Attribute> attribute, float value) {
 	if (has_attribute(attribute)) {
 		attribute_map.try_set_value(attribute, value);
-		emit_signal(as_signal::AttributeValueChanged, attribute);
+		emit_signal(as_signal::AttributeValueChanged, attribute, value);
 	}
 }
 
@@ -205,12 +205,14 @@ bool AbilitySystem::has_all_tags(TypedArray<Tag> tags_to_check) const {
 void AbilitySystem::grant_tag(Ref<Tag> tag) {
 	if (!has_tag(tag)) {
 		tags.append(tag);
+		emit_signal(as_signal::TagGranted, tag);
 	}
 }
 
 void AbilitySystem::revoke_tag(Ref<Tag> tag) {
 	if (has_tag(tag)) {
 		tags.erase(tag);
+		emit_signal(as_signal::TagRevoked, tag);
 	}
 }
 
