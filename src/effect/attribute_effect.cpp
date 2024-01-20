@@ -1,5 +1,9 @@
 #include "attribute_effect.h"
 
+#ifndef ABILITY_SYSTEM_MODULE
+#include <godot_cpp/variant/utility_functions.hpp>
+#endif
+
 #include "../ability_system.h"
 
 void AttributeEffect::_bind_methods() {
@@ -12,13 +16,13 @@ void AttributeEffect::_bind_methods() {
 	PROP(Variant::FLOAT, max_effect);
 }
 
-Status AttributeEffect::_tick(AbilitySystem *owner, float delta) {
+int AttributeEffect::_tick(AbilitySystem *owner, float delta) {
 	if (attribute.is_null()) {
 		print_error("No attribute provided!");
 		return Status::FINISHED;
 	}
 	if (owner->has_attribute(attribute)) {
-		float effect = Math::random(min_effect, max_effect);
+		float effect = RANDF_RANGE(min_effect, max_effect);
 		owner->modify_attribute_value(attribute, effect);
 	} else {
 		print_error("Searching for attribute: " + stringify_variants(attribute));

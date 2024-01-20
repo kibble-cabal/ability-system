@@ -6,6 +6,9 @@
 #else
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/variant/variant.hpp>
+#include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/core/object.hpp>
+using namespace godot;
 #endif
 
 #include "../macros.hpp"
@@ -37,7 +40,7 @@ public:
 	/* Virtual methods */
 
 	virtual void _start(AbilitySystem *owner) {}
-	virtual Status _tick(AbilitySystem *owner, float delta) { return Status::RUNNING; }
+	virtual int _tick(AbilitySystem *owner, float delta) { return Status::RUNNING; }
 	virtual void _finish(AbilitySystem *owner) {}
 
 	/* Methods */

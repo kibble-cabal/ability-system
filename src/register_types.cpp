@@ -10,20 +10,21 @@
 #include <godot_cpp/godot.hpp>
 #endif
 
-#include "src/ability.hpp"
-#include "src/ability_event.h"
-#include "src/ability_system.h"
-#include "src/attribute.hpp"
-#include "src/attribute_map.hpp"
-#include "src/effect/attribute_effect.h"
-#include "src/effect/tag_effect.h"
-#include "src/effect/wait_effect.hpp"
+#include "ability.hpp"
+#include "ability_event.h"
+#include "ability_system.h"
+#include "attribute.hpp"
+#include "attribute_map.hpp"
+#include "effect/attribute_effect.h"
+#include "effect/tag_effect.h"
+#include "effect/wait_effect.hpp"
 
 // Editor
-#include "src/editor/ability_viewer.hpp"
-#include "src/editor/attribute_viewer.hpp"
-#include "src/editor/event_viewer.hpp"
-#include "src/editor/tag_viewer.hpp"
+#include "editor/viewer_base.h"
+#include "editor/ability_viewer.h"
+#include "editor/attribute_viewer.h"
+#include "editor/event_viewer.h"
+#include "editor/tag_viewer.h"
 
 void initialize_ability_system_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
@@ -40,6 +41,7 @@ void initialize_ability_system_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<AbilitySystem>();
 
 	// Editor
+	ClassDB::register_class<AbilitySystemViewerBase>();
 	ClassDB::register_class<TagViewer>();
 	ClassDB::register_class<AttributeViewer>();
 	ClassDB::register_class<AbilityViewer>();

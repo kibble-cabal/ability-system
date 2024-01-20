@@ -12,4 +12,3 @@ using namespace godot;
 
 void initialize_ability_system_module(ModuleInitializationLevel p_level);
 void uninitialize_ability_system_module(ModuleInitializationLevel p_level);
-/* yes, the word in the middle must be the same as the module folder name */

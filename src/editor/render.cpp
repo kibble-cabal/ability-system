@@ -1,6 +1,3 @@
-#ifndef AS_RENDER_HPP
-#define AS_RENDER_HPP
-
 #ifdef ABILITY_SYSTEM_MODULE
 #include "scene/main/canvas_item.h"
 #include "scene/theme/theme_db.h"
@@ -9,32 +6,12 @@
 #include <godot_cpp/classes/theme_db.hpp>
 #include <godot_cpp/classes/font.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
+#include <godot_cpp/variant/variant.hpp>
 using namespace godot;
 #endif
 
+#include "../macros.hpp"
 #include "map"
-
-Ref<Font> font() {
-	return ThemeDB::get_singleton()->get_fallback_font();
-}
-
-int font_size() {
-	return ThemeDB::get_singleton()->get_fallback_font_size();
-}
-
-Vector2 string_size(String text) {
-	return font()->get_string_size(text, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size());
-}
-
-Vector2 string_pos() {
-	return Vector2(0, font_size());
-}
-
-Color contrast(Color other) {
-	if (other.get_luminance() > 0.5)
-		return Color(0, 0, 0);
-	return Color(1, 1, 1);
-}
 
 struct Drawable {
 public:
@@ -44,6 +21,36 @@ public:
 	Drawable() {}
 	virtual ~Drawable() {}
 	virtual void draw() {}
+
+	bool can_draw() const {
+		#ifdef ABILITY_SYSTEM_MODULE
+		return canvas != nullptr && canvas->is_ready();
+		#else
+		return canvas != nullptr && canvas->is_node_ready();
+		#endif
+	}
+
+	Ref<Font> font() const {
+		return ThemeDB::get_singleton()->get_fallback_font();
+	}
+
+	int font_size() const {
+		return ThemeDB::get_singleton()->get_fallback_font_size();
+	}
+
+	Vector2 string_size(String text) const {
+		return font()->get_string_size(text, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size()).abs();
+	}
+
+	Vector2 string_pos() const {
+		return Vector2(0, font_size());
+	}
+
+	Color contrast(Color other) const {
+		if (other.get_luminance() > 0.5)
+			return Color(0, 0, 0);
+		return Color(1, 1, 1);
+	}
 };
 
 enum LabelStyle {
@@ -74,15 +81,21 @@ public:
 	}
 
 	void draw_filled() const {
+		if (!can_draw())
+			return;
 		canvas->draw_rect(bbox(), color);
 		canvas->draw_string(font(), string_pos(), string, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size(), contrast(color));
 	}
 
 	void draw_text() const {
+		if (!can_draw())
+			return;
 		canvas->draw_string(font(), string_pos(), string, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size(), color);
 	}
 
 	void draw_outlined() const {
+		if (!can_draw())
+			return;
 		canvas->draw_rect(bbox(), Color(color, 0.1));
 		canvas->draw_rect(bbox(), Color(color, 0.5), false, 1);
 		canvas->draw_string(font(), string_pos(), string, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size(), color);
@@ -108,13 +121,11 @@ public:
 	Color color;
 	float value;
 
-	void draw_progress() {
+	virtual void draw() override {
+		if (!can_draw())
+			return;
 		canvas->draw_rect(rect, Color(color, 0.15));
 		canvas->draw_rect(Rect2(rect.position, rect.size * Vector2(value, 1)), color);
-	}
-
-	virtual void draw() override {
-		draw_progress();
 	}
 };
 
@@ -179,10 +190,14 @@ public:
 	}
 
 	void draw_background(Color color) {
+		if (!can_draw())
+			return;
 		canvas->draw_rect(total_rect(), color);
 	}
 
 	void draw_outline(Color color) {
+		if (!can_draw())
+			return;
 		canvas->draw_rect(total_rect().grow(2), color, false, 1);
 	}
 
@@ -197,12 +212,10 @@ public:
 		String string = name + " " + stringify_variants(value * 100).left(5) + "%";
 		RenderLabel *label = add_label(string, color);
 		RenderProgress progress;
-		progress.rect.size = Vector2(remaining_width(), font_size());
+		progress.rect.size = Vector2(remaining_width(), font_size()).abs();
 		progress.color = color;
 		progress.value = value;
 		progress.canvas = canvas;
 		return std::pair(label, add(progress));
 	}
 };
-
-#endif

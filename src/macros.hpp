@@ -56,10 +56,15 @@
 	GETTER(ty, prop_name)              \
 	SETTER_RESOURCE(ty, prop_name)
 
-#ifndef ABILITY_SYSTEM_MODULE
+#ifdef ABILITY_SYSTEM_MODULE
 
-#define stringify_variants(arg) \
-	UtilityFunctions::str(arg)
+#define RANDF_RANGE(min, max) Math::random(min, max)
+
+#else
+
+#define stringify_variants(arg) UtilityFunctions::str(arg)
+#define print_error(arg) UtilityFunctions::printerr(arg)
+#define RANDF_RANGE(min, max) UtilityFunctions::randf_range(min, max)
 
 #endif
 

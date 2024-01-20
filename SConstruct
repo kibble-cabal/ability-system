@@ -3,7 +3,7 @@
 env = SConscript("godot-cpp/SConstruct")
 
 env.Append(CPPPATH=["src/"])
-sources = Glob("src/*.cpp")
+sources = Glob("src/*.cpp") + Glob("src/effect/*.cpp") + Glob("src/editor/*.cpp")
 
 if env["platform"] == "macos":
     library = env.SharedLibrary(
