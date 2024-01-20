@@ -1,0 +1,30 @@
+[gd_scene load_steps=2 format=3 uid="uid://cejeu0d153ssa"]
+
+[ext_resource type="Script" path="res://addons/ability_system_inspector/attribute_editor/editor_scene.gd" id="1_8hji1"]
+
+[node name="AttributeEditor" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_8hji1")
+
+[node name="FileDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
+title = "Add Resource(s)"
+initial_position = 1
+size = Vector2i(1200, 800)
+ok_button_text = "Add"
+mode_overrides_title = false
+file_mode = 1
+filters = PackedStringArray("*.tres", "*.res")
+
+[node name="AddButton" type="Button" parent="."]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Add..."
+
+[connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
+[connection signal="files_selected" from="FileDialog" to="." method="_on_file_dialog_files_selected"]
+[connection signal="pressed" from="AddButton" to="." method="_on_add_button_pressed"]
