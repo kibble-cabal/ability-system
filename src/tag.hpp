@@ -1,9 +1,14 @@
 #ifndef AS_TAG_HPP
 #define AS_TAG_HPP
 
+#ifdef ABILITY_SYSTEM_MODULE
 #include "core/io/resource.h"
+#else
+#include <godot_cpp/classes/resource.hpp>
+using namespace godot;
+#endif
+
 #include "macros.hpp"
-#include "scene/resources/texture.h"
 #include "utils.hpp"
 
 class Tag : public Resource {
@@ -36,7 +41,11 @@ public:
 	GETSET_RESOURCE(StringName, identifier)
 	GETSET_RESOURCE(Color, ui_color);
 
+	#ifdef ABILITY_SYSTEM_MODULE
 	virtual String to_string() override {
+	#else
+	String _to_string() const {
+	#endif
 		return String("Tag({0})").format(variant_array(identifier));
 	}
 };

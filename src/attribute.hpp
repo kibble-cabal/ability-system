@@ -1,7 +1,13 @@
 #ifndef AS_ATTRIBUTE_H
 #define AS_ATTRIBUTE_H
 
+#ifdef ABILITY_SYSTEM_MODULE
 #include "core/io/resource.h"
+#else
+#include <godot_cpp/classes/resource.hpp>
+using namespace godot;
+#endif
+
 #include "macros.hpp"
 #include "utils.hpp"
 
@@ -48,7 +54,11 @@ public:
 	GETSET_RESOURCE(float, default_value)
 	GETSET_RESOURCE(Color, ui_color)
 
+	#ifdef ABILITY_SYSTEM_MODULE
 	virtual String to_string() override {
+	#else
+	String _to_string() const {
+	#endif
 		return String("Attribute({0})").format(variant_array(identifier));
 	}
 };

@@ -53,7 +53,11 @@ public:
 		});
 	}
 
+	#ifdef ABILITY_SYSTEM_MODULE
 	Vector2 get_minimum_size() const override {
+	#else
+	Vector2 _get_minimum_size() const override {
+	#endif
 		if (get_ability_system() == nullptr)
 			return Vector2();
 		Rect2 total_rect;

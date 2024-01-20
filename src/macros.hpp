@@ -56,4 +56,11 @@
 	GETTER(ty, prop_name)              \
 	SETTER_RESOURCE(ty, prop_name)
 
+#ifndef ABILITY_SYSTEM_MODULE
+
+#define stringify_variants(arg) \
+	UtilityFunctions::str(arg)
+
+#endif
+
 #endif

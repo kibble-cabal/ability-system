@@ -1,13 +1,20 @@
 #ifndef AS_EFFECT_H
 #define AS_EFFECT_H
 
+#ifdef ABILITY_SYSTEM_MODULE
+#include "core/io/resource.h"
+#else
+#include <godot_cpp/classes/resource.hpp>
+#include <godot_cpp/variant/variant.hpp>
+#endif
+
 #include "../macros.hpp"
 #include "../status.hpp"
-#include "core/io/resource.h"
 
 class AbilitySystem;
 
-class Effect : public Resource {
+class Effect : public Resource
+{
 	GDCLASS(Effect, Resource);
 
 private:
@@ -38,7 +45,12 @@ public:
 	Status tick(AbilitySystem *owner, float delta);
 	void start(AbilitySystem *owner);
 	void finish(AbilitySystem *owner);
+	
+	#ifdef ABILITY_SYSTEM_MODULE
 	virtual String to_string() override;
+	#else
+	String _to_string() const;
+	#endif
 };
 
 #endif

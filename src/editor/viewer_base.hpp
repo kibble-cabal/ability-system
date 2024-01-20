@@ -1,9 +1,15 @@
 #ifndef AS_VIEWERBASE_HPP
 #define AS_VIEWERBASE_HPP
 
+#ifdef ABILITY_SYSTEM_MODULE
+#include "scene/gui/control.h"
+#else
+#include <classes/control.hpp>
+using namespace godot;
+#endif
+
 #include "../ability_system.h"
 #include "render.hpp"
-#include "scene/gui/control.h"
 
 class AbilitySystemViewerBase : public Control {
 	GDCLASS(AbilitySystemViewerBase, Control);
@@ -62,8 +68,13 @@ public:
 	GETSET(NodePath, ability_system_path)
 
 	AbilitySystem *get_ability_system() const {
+		#ifdef ABILITY_SYSTEM_MODULE
 		if (is_inside_tree() && has_node(ability_system_path))
 			return Object::cast_to<AbilitySystem>(get_node(ability_system_path));
+		#else
+		if (is_inside_tree() && has_node(ability_system_path))
+			return get_node<AbilitySystem>(ability_system_path);
+		#endif
 		return nullptr;
 	}
 

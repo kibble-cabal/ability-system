@@ -1,9 +1,18 @@
 #ifndef AS_RENDER_HPP
 #define AS_RENDER_HPP
 
-#include "map"
+#ifdef ABILITY_SYSTEM_MODULE
 #include "scene/main/canvas_item.h"
 #include "scene/theme/theme_db.h"
+#else
+#include <godot_cpp/classes/canvas_item.hpp>
+#include <godot_cpp/classes/theme_db.hpp>
+#include <godot_cpp/classes/font.hpp>
+#include <godot_cpp/variant/utility_functions.hpp>
+using namespace godot;
+#endif
+
+#include "map"
 
 Ref<Font> font() {
 	return ThemeDB::get_singleton()->get_fallback_font();

@@ -2,7 +2,14 @@
 
 #include "register_types.h"
 
+#ifdef ABILITY_SYSTEM_MODULE
 #include "core/object/class_db.h"
+#else
+#include <gdextension_interface.h>
+#include <godot_cpp/core/defs.hpp>
+#include <godot_cpp/godot.hpp>
+#endif
+
 #include "src/ability.hpp"
 #include "src/ability_event.h"
 #include "src/ability_system.h"
@@ -43,5 +50,21 @@ void uninitialize_ability_system_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
-	// Nothing to do here in this example.
 }
+
+#ifndef ABILITY_SYSTEM_MODULE
+extern "C"
+{
+	// Initialization.
+	GDExtensionBool GDE_EXPORT ability_system_init(GDExtensionInterfaceGetProcAddress p_get_proc_address, const GDExtensionClassLibraryPtr p_library, GDExtensionInitialization *r_initialization)
+	{
+		godot::GDExtensionBinding::InitObject init_obj(p_get_proc_address, p_library, r_initialization);
+
+		init_obj.register_initializer(initialize_ability_system_module);
+		init_obj.register_terminator(uninitialize_ability_system_module);
+		init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_SCENE);
+
+		return init_obj.init();
+	}
+}
+#endif

@@ -1,6 +1,10 @@
 
 #include "effect.h"
 
+#ifndef ABILITY_SYSTEM_MODULE
+#include <godot_cpp/core/class_db.hpp>
+#endif
+
 #include "../utils.hpp"
 
 void Effect::_bind_methods() {
@@ -41,7 +45,11 @@ void Effect::finish(AbilitySystem *owner) {
 	_finish(owner);
 }
 
+#ifdef ABILITY_SYSTEM_MODULE
 String Effect::to_string() {
+#else
+String Effect::_to_string() const {
+#endif
 	if (String(ui_name).is_empty()) {
 		return String("{0}()").format(variant_array(get_class_static()));
 	}

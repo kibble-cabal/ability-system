@@ -1,8 +1,16 @@
 #ifndef AS_ATTRIBUTEMAP_HPP
 #define AS_ATTRIBUTEMAP_HPP
 
-#include "attribute.hpp"
+#ifdef ABILITY_SYSTEM_MODULE
 #include "core/object/ref_counted.h"
+#else
+#include <godot_cpp/classes/resource.hpp>
+#include <godot_cpp/templates/hashfuncs.hpp>
+#include <godot_cpp/templates/hash_map.hpp>
+using namespace godot;
+#endif
+
+#include "attribute.hpp"
 #include "map"
 
 struct AttributeHasher {
@@ -36,8 +44,9 @@ public:
 
 	void set_attribute_dict(Dictionary value) {
 		attributes.clear();
-		for (int i = 0; i < value.size(); i++) {
-			Ref<Attribute> key = value.get_key_at_index(i);
+		Array keys = value.keys();
+		for (int i = 0; i < keys.size(); i++) {
+			Ref<Attribute> key = keys[i];
 			attributes[key] = value[key];
 		}
 	}
