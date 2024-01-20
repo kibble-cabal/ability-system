@@ -37,7 +37,7 @@ void AbilitySystem::_bind_methods() {
 	ARRAY_PROP(tags, RESOURCE_TYPE_HINT("Tag"));
 	ARRAY_PROP(abilities, RESOURCE_TYPE_HINT("Ability"));
 	ARRAY_PROP(events, RESOURCE_TYPE_HINT("AbilityEvent"));
-	ADD_PROPERTY(PropertyInfo(Variant::DICTIONARY, "attributes", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NO_EDITOR), "set_attribute_dict", "get_attribute_dict");
+	ADD_PROPERTY(PropertyInfo(Variant::DICTIONARY, "attributes"), "set_attribute_dict", "get_attribute_dict");
 	ClassDB::add_property(get_class_static(), PropertyInfo(Variant::INT, "update_mode", PROPERTY_HINT_ENUM, UpdateModePropertyHint), "set_update_mode", "get_update_mode");
 
 	/* Bind signals */

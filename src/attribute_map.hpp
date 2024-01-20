@@ -35,6 +35,7 @@ public:
 	}
 
 	void set_attribute_dict(Dictionary value) {
+		attributes.clear();
 		for (int i = 0; i < value.size(); i++) {
 			Ref<Attribute> key = value.get_key_at_index(i);
 			attributes[key] = value[key];
