@@ -1,12 +1,11 @@
 #ifndef AS_TAGINSPECTORPROPERTY_H
 #define AS_TAGINSPECTORPROPERTY_H
 
-#ifndef ABILITY_SYSTEM_MODULE
 #include <godot_cpp/classes/editor_property.hpp>
-using namespace godot;
-#endif
 
 #include "editor.h"
+
+using namespace godot;
 
 class TagInspectorProperty : public EditorProperty {
     GDCLASS(TagInspectorProperty, EditorProperty);

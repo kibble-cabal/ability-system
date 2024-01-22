@@ -1,8 +1,6 @@
 #include "attribute_effect.h"
 
-#ifndef ABILITY_SYSTEM_MODULE
 #include <godot_cpp/variant/utility_functions.hpp>
-#endif
 
 #include "../ability_system.h"
 

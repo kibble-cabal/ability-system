@@ -1,19 +1,16 @@
 #ifndef AS_ABILITYSYSTEM_H
 #define AS_ABILITYSYSTEM_H
 
-#ifdef ABILITY_SYSTEM_MODULE
-#include "scene/main/node.h"
-#else
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/classes/engine.hpp>
-using namespace godot;
-#endif
 
 #include "ability.hpp"
 #include "ability_event.h"
 #include "attribute_map.hpp"
 #include "signal.hpp"
 #include "tag.hpp"
+
+using namespace godot;
 
 enum UpdateMode {
 	PHYSICS = 1,
@@ -55,13 +52,8 @@ public:
 	}
 
 	void update_process_mode() {
-		#ifdef ABILITY_SYSTEM_MODULE
-		if (!is_ready() || Engine::get_singleton()->is_editor_hint())
-			return;
-		#else
 		if (!is_node_ready() || Engine::get_singleton()->is_editor_hint())
 			return;
-		#endif
 		set_process_internal(false);
 		set_physics_process_internal(false);
 		if (events.size()) {
@@ -127,11 +119,7 @@ public:
 	void revoke_tag(Ref<Tag> tag);
 
 	/* Other */
-	#ifdef ABILITY_SYSTEM_MODULE
-	virtual String to_string() override;
-	#else
 	String _to_string() const;
-	#endif
 };
 
 #endif

@@ -1,7 +1,6 @@
 #ifndef AS_ATTRIBUTEINSPECTOREDITOR_H
 #define AS_ATTRIBUTEINSPECTOREDITOR_H
 
-#ifndef ABILITY_SYSTEM_MODULE
 #include <godot_cpp/classes/v_box_container.hpp>
 #include <godot_cpp/classes/h_box_container.hpp>
 #include <godot_cpp/classes/button.hpp>
@@ -11,12 +10,11 @@
 #include <godot_cpp/classes/resource_loader.hpp>
 #include <godot_cpp/classes/editor_resource_picker.hpp>
 
-using namespace godot;
-#endif
-
 #include "../../attribute_map.hpp"
 #include "functional"
 #include "editor_row.h"
+
+using namespace godot;
 
 class Attribute;
 

@@ -6,15 +6,9 @@
 
 void Effect::_bind_methods() {
 	/* Bind virtual methods */
-	#ifdef ABILITY_SYSTEM_MODULE
-	ClassDB::add_virtual_method(get_class_static(), MethodInfo("_start", OBJECT_PROP_INFO(AbilitySystem, owner)), true, PackedStringArray({ "owner" }));
-	ClassDB::add_virtual_method(get_class_static(), MethodInfo("_tick", OBJECT_PROP_INFO(AbilitySystem, owner), PropertyInfo(Variant::FLOAT, "delta")), true, PackedStringArray({ "owner", "delta" }));
-	ClassDB::add_virtual_method(get_class_static(), MethodInfo("_finish", OBJECT_PROP_INFO(AbilitySystem, owner)), true, PackedStringArray({ "owner" }));
-	#else
 	BIND_VIRTUAL_METHOD(Effect, _start);
 	BIND_VIRTUAL_METHOD(Effect, _tick);
 	BIND_VIRTUAL_METHOD(Effect, _finish);
-	#endif
 
 	/* Bind property getters/setters */
 	BIND_GETSET(Effect, elapsed_time);
@@ -48,11 +42,7 @@ void Effect::finish(AbilitySystem *owner) {
 	_finish(owner);
 }
 
-#ifdef ABILITY_SYSTEM_MODULE
-String Effect::to_string() {
-#else
 String Effect::_to_string() const {
-#endif
 	if (String(ui_name).is_empty()) {
 		return String("{0}()").format(variant_array(get_class_static()));
 	}

@@ -1,7 +1,6 @@
 #ifndef AS_TAGINSPECTOREDITOR_H
 #define AS_TAGINSPECTOREDITOR_H
 
-#ifndef ABILITY_SYSTEM_MODULE
 #include <godot_cpp/classes/v_box_container.hpp>
 #include <godot_cpp/classes/h_box_container.hpp>
 #include <godot_cpp/classes/h_flow_container.hpp>
@@ -9,10 +8,9 @@
 #include <godot_cpp/variant/typed_array.hpp>
 #include <godot_cpp/classes/editor_resource_picker.hpp>
 
-using namespace godot;
-#endif
-
 #include "functional"
+
+using namespace godot;
 
 class Tag;
 

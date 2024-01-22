@@ -2,14 +2,10 @@
 
 #include "register_types.h"
 
-#ifdef ABILITY_SYSTEM_MODULE
-#include "core/object/class_db.h"
-#else
 #include <gdextension_interface.h>
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/classes/editor_plugin_registration.hpp>
-#endif
 
 #include "ability.hpp"
 #include "ability_event.h"
@@ -78,7 +74,6 @@ void initialize_ability_system_module(ModuleInitializationLevel p_level) {
 
 void uninitialize_ability_system_module(ModuleInitializationLevel p_level) {}
 
-#ifndef ABILITY_SYSTEM_MODULE
 extern "C"
 {
 	// Initialization.
@@ -93,4 +88,3 @@ extern "C"
 		return init_obj.init();
 	}
 }
-#endif

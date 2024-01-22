@@ -1,11 +1,9 @@
 #ifndef AS_TAGINSPECTORPLUGIN_H
 #define AS_TAGINSPECTORPLUGIN_H
 
-#ifndef ABILITY_SYSTEM_MODULE
 #include <godot_cpp/classes/editor_inspector_plugin.hpp>
 #include <godot_cpp/classes/editor_plugin.hpp>
 using namespace godot;
-#endif
 
 #include "property.h"
 #include "../../ability_system.h"

@@ -1,14 +1,13 @@
 #ifndef AS_ATTRIBUTEINSPECTORPLUGIN_H
 #define AS_ATTRIBUTEINSPECTORPLUGIN_H
 
-#ifndef ABILITY_SYSTEM_MODULE
 #include <godot_cpp/classes/editor_inspector_plugin.hpp>
 #include <godot_cpp/classes/editor_plugin.hpp>
-using namespace godot;
-#endif
 
 #include "property.h"
 #include "../../ability_system.h"
+
+using namespace godot;
 
 class AttributeInspectorPropertyPlugin: public EditorInspectorPlugin {
     GDCLASS(AttributeInspectorPropertyPlugin, EditorInspectorPlugin);

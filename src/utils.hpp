@@ -1,10 +1,8 @@
 #ifndef AS_UTILS_HPP
 #define AS_UTILS_HPP
 
-#ifndef ABILITY_SYSTEM_MODULE
 #include <godot_cpp/variant/variant.hpp>
 using namespace godot;
-#endif
 
 template <typename Ty, typename Fn>
 bool any(TypedArray<Ty> array, Fn fn) {

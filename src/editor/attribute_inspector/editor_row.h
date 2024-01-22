@@ -1,7 +1,6 @@
 #ifndef AS_ATTRIBUTEINSPECTOREDITORROW_H
 #define AS_ATTRIBUTEINSPECTOREDITORROW_H
 
-#ifndef ABILITY_SYSTEM_MODULE
 #include <godot_cpp/classes/h_box_container.hpp>
 #include <godot_cpp/classes/button.hpp>
 #include <godot_cpp/classes/label.hpp>
@@ -9,11 +8,10 @@
 #include <godot_cpp/classes/spin_box.hpp>
 #include <godot_cpp/classes/font_variation.hpp>
 
-using namespace godot;
-#endif
-
 #include "../../attribute_map.hpp"
 #include "functional"
+
+using namespace godot;
 
 class AttributeInspectorEditorRow : public HBoxContainer {
     GDCLASS(AttributeInspectorEditorRow, HBoxContainer);

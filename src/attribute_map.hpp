@@ -1,17 +1,14 @@
 #ifndef AS_ATTRIBUTEMAP_HPP
 #define AS_ATTRIBUTEMAP_HPP
 
-#ifdef ABILITY_SYSTEM_MODULE
-#include "core/object/ref_counted.h"
-#else
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/templates/hashfuncs.hpp>
 #include <godot_cpp/templates/hash_map.hpp>
-using namespace godot;
-#endif
 
 #include "attribute.hpp"
 #include "map"
+
+using namespace godot;
 
 struct AttributeHasher {
 	static _FORCE_INLINE_ uint32_t hash(const Ref<Attribute> &attribute) {

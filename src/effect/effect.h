@@ -1,18 +1,15 @@
 #ifndef AS_EFFECT_H
 #define AS_EFFECT_H
 
-#ifdef ABILITY_SYSTEM_MODULE
-#include "core/io/resource.h"
-#else
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/variant/variant.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/core/object.hpp>
-using namespace godot;
-#endif
 
 #include "../macros.hpp"
 #include "../status.hpp"
+
+using namespace godot;
 
 class AbilitySystem;
 
@@ -49,11 +46,7 @@ public:
 	void start(AbilitySystem *owner);
 	void finish(AbilitySystem *owner);
 	
-	#ifdef ABILITY_SYSTEM_MODULE
-	virtual String to_string() override;
-	#else
 	String _to_string() const;
-	#endif
 };
 
 #endif

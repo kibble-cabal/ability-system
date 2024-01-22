@@ -1,15 +1,12 @@
 #ifndef AS_ABILITYEVENT_HPP
 #define AS_ABILITYEVENT_HPP
 
-#ifdef ABILITY_SYSTEM_MODULE
-#include "core/io/resource.h"
-#else
 #include <godot_cpp/classes/resource.hpp>
-using namespace godot;
-#endif
 
 #include "ability.hpp"
 #include "status.hpp"
+
+using namespace godot;
 
 class AbilitySystem;
 
@@ -35,11 +32,7 @@ public:
 	void start(AbilitySystem *owner);
 	Status tick(AbilitySystem *owner, float delta);
 
-	#ifdef ABILITY_SYSTEM_MODULE
-	String to_string() override;
-	#else
 	String _to_string() const;
-	#endif
 };
 
 #endif
