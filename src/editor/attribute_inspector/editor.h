@@ -9,6 +9,7 @@
 #include <godot_cpp/classes/file_dialog.hpp>
 #include <godot_cpp/variant/typed_array.hpp>
 #include <godot_cpp/classes/resource_loader.hpp>
+#include <godot_cpp/classes/editor_resource_picker.hpp>
 
 using namespace godot;
 #endif
@@ -24,19 +25,18 @@ class AttributeInspectorEditor : public VBoxContainer {
 
 private:
     AttributeHashMap<AttributeInspectorEditorRow *> row_nodes;
-    FileDialog *file_dialog = memnew(FileDialog);
+    HBoxContainer *h_box = memnew(HBoxContainer);
     Button *add_button = memnew(Button);
+    EditorResourcePicker *picker = memnew(EditorResourcePicker);
 
 public:
-    std::function<void (TypedArray<Attribute>)> on_add = nullptr;
+    std::function<void (Ref<Attribute>)> on_add = nullptr;
     std::function<void (Ref<Attribute>)> on_remove = nullptr;
     std::function<void (Ref<Attribute>, float)> on_change = nullptr;
 
 private:
     void render_attribute(Ref<Attribute> attribute, float value);
     void _on_add_pressed();
-    void _on_file_selected(String paths);
-    void _on_files_selected(PackedStringArray paths);
 
 protected:
     static void _bind_methods();

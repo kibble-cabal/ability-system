@@ -1,27 +1,30 @@
 #include "editor.h"
+#include <godot_cpp/variant/utility_functions.hpp>
 
 AttributeInspectorEditor::AttributeInspectorEditor() {
     add_theme_constant_override("separation", 0);
 
-    // Update file dialog
-    file_dialog->set_file_mode(FileDialog::FileMode::FILE_MODE_OPEN_FILES);
-    file_dialog->set_filters(variant_array("*.tres", "*.res"));
-    add_child(file_dialog);
+    // Update resource picker & add button container
+    h_box->set_h_size_flags(SIZE_EXPAND_FILL);
+    add_child(h_box);
+
+    // Update resource picker
+    picker->set_h_size_flags(SIZE_EXPAND_FILL);
+    picker->set_base_type("Attribute");
+    picker->set_toggle_mode(true);
 
     // Update button
     add_button->set_text("Add +");
-    add_child(add_button);
 }
 
 void AttributeInspectorEditor::_ready() {
-    file_dialog->connect("files_selected", callable_mp(this, &AttributeInspectorEditor::_on_files_selected));
+    h_box->add_child(picker);
+    h_box->add_child(add_button);
     add_button->connect("pressed", callable_mp(this, &AttributeInspectorEditor::_on_add_pressed));
 }
 
 void AttributeInspectorEditor::_bind_methods() {
     ClassDB::bind_method(D_METHOD("_on_add_pressed"), &AttributeInspectorEditor::_on_add_pressed);
-    ClassDB::bind_method(D_METHOD("_on_file_selected", "path"), &AttributeInspectorEditor::_on_file_selected);
-    ClassDB::bind_method(D_METHOD("_on_files_selected", "paths"), &AttributeInspectorEditor::_on_files_selected);
 }
 
 void AttributeInspectorEditor::render_attribute(Ref<Attribute> attribute, float value) {
@@ -39,26 +42,14 @@ void AttributeInspectorEditor::render_attribute(Ref<Attribute> attribute, float 
 }
 
 void AttributeInspectorEditor::_on_add_pressed() {
-    file_dialog->show();
-}
-
-void AttributeInspectorEditor::_on_files_selected(PackedStringArray paths) {
-    if (on_add == nullptr)
-        return;
-    TypedArray<Attribute> attributes_to_add;
-    for (String path: paths) {
-        Ref<Resource> resource = ResourceLoader::get_singleton()->load(path);
-        if (auto attribute = Object::cast_to<Attribute>(resource.ptr())) {
-            attributes_to_add.push_back(attribute);
-        }
+    Ref<Resource> resource = picker->get_edited_resource();
+    if (resource.is_valid()) {
+        Ref<Attribute> attribute = (Ref<Attribute>)resource;
+        if (attribute != nullptr) 
+            on_add({ attribute });
+        picker->set_edited_resource(nullptr);
     }
-    on_add(attributes_to_add);
 }
-
-void AttributeInspectorEditor::_on_file_selected(String path) {
-    _on_files_selected(variant_array(path));
-}
-
 
 void AttributeInspectorEditor::update(Dictionary new_value) {
     // Render or re-render all attributes.

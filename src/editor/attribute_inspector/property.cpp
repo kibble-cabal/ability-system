@@ -5,11 +5,9 @@
 
 AttributeInspectorProperty::AttributeInspectorProperty() {
     editor = memnew(AttributeInspectorEditor);
-    editor->on_add = [&](TypedArray<Attribute> attributes) {
+    editor->on_add = [&](Ref<Attribute> attribute) {
         Dictionary current_value = get_current_value();
-        for_each(attributes, [&](Ref<Attribute> attribute) {
-            current_value[attribute] = attribute->get_default_value();
-        });
+        current_value[attribute] = attribute->get_default_value();
         emit_changed(get_edited_property(), current_value);
     };
     editor->on_remove = [&](Ref<Attribute> attribute) {
