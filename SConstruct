@@ -8,6 +8,7 @@ sources = (
     + Glob("src/effect/*.cpp")
     + Glob("src/editor/*.cpp")
     + Glob("src/editor/attribute_inspector/*.cpp")
+    + Glob("src/editor/tag_inspector/*.cpp")
 )
 
 if env["platform"] == "macos":

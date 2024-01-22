@@ -33,6 +33,11 @@
 #include "editor/attribute_inspector/editor.h"
 #include "editor/attribute_inspector/editor_row.h"
 
+// Editor: Tag Inspector
+#include "editor/tag_inspector/plugin.hpp"
+#include "editor/tag_inspector/property.h"
+#include "editor/tag_inspector/editor.h"
+
 
 void initialize_ability_system_module(ModuleInitializationLevel p_level) {
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE) {
@@ -62,6 +67,12 @@ void initialize_ability_system_module(ModuleInitializationLevel p_level) {
 		ClassDB::register_class<AttributeInspectorPropertyPlugin>();
 		ClassDB::register_class<AttributeInspectorPlugin>();
 		EditorPlugins::add_by_type<AttributeInspectorPlugin>();
+		// Editor: Tag Inspector
+		ClassDB::register_class<TagInspectorEditor>();
+		ClassDB::register_class<TagInspectorProperty>();
+		ClassDB::register_class<TagInspectorPropertyPlugin>();
+		ClassDB::register_class<TagInspectorPlugin>();
+		EditorPlugins::add_by_type<TagInspectorPlugin>();
 	}
 }
 
