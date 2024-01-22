@@ -50,8 +50,7 @@ void EventViewer::_draw() {
     });
 }
 
-#ifdef ABILITY_SYSTEM_MODULE
-Vector2 EventViewer::get_minimum_size() const {
+Vector2 EventViewer::_get_minimum_size() const {
     if (get_ability_system() == nullptr)
         return Vector2();
     Rect2 total_rect;
@@ -64,4 +63,3 @@ Vector2 EventViewer::get_minimum_size() const {
     });
     return total_rect.size;
 }
-#endif

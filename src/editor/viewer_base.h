@@ -49,10 +49,7 @@ public:
 
 	void draw();
 
-	// FIXME: overriding _get_minimum_size() crashes when run as GDExtension
-	#ifdef ABILITY_SYSTEM_MODULE
-	Vector2 get_minimum_size() const override { return Vector2(); }
-	#endif
+	Vector2 _get_minimum_size() const override { return Vector2(); }
 };
 
 #endif

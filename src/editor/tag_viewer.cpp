@@ -21,9 +21,8 @@ void TagViewer::_draw() {
     container.draw();
 }
 
-#ifdef ABILITY_SYSTEM_MODULE
-Vector2 TagViewer::get_minimum_size() const override {
-    if (get_ability_system() == nullptr || !is_ready())
+Vector2 TagViewer::_get_minimum_size() const {
+    if (get_ability_system() == nullptr || !is_node_ready())
         return Vector2();
     RenderContainer container;
     container.max_size = Vector2(get_size().x, 0);
@@ -32,4 +31,3 @@ Vector2 TagViewer::get_minimum_size() const override {
     });
     return container.total_size();
 }
-#endif

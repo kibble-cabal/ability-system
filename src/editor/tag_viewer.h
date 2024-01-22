@@ -16,9 +16,7 @@ public:
 
 	virtual void _draw() override;
 
-	#ifdef ABILITY_SYSTEM_MODULE
-	Vector2 get_minimum_size() const override;
-	#endif
+	Vector2 _get_minimum_size() const override;
 };
 
 #endif

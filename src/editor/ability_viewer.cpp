@@ -21,8 +21,7 @@ void AbilityViewer::_draw() {
     container.draw();
 }
 
-#ifdef ABILITY_SYSTEM_MODULE
-Vector2 AbilityViewer::get_minimum_size() const {
+Vector2 AbilityViewer::_get_minimum_size() const {
     if (get_ability_system() == nullptr)
         return Vector2();
     RenderContainer container;
@@ -32,4 +31,3 @@ Vector2 AbilityViewer::get_minimum_size() const {
     });
     return container.total_size();
 }
-#endif
