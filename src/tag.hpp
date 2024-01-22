@@ -1,9 +1,10 @@
 #ifndef AS_TAG_HPP
 #define AS_TAG_HPP
 
-#include "core/io/resource.h"
+#include <godot_cpp/classes/resource.hpp>
+using namespace godot;
+
 #include "macros.hpp"
-#include "scene/resources/texture.h"
 #include "utils.hpp"
 
 class Tag : public Resource {
@@ -36,7 +37,7 @@ public:
 	GETSET_RESOURCE(StringName, identifier)
 	GETSET_RESOURCE(Color, ui_color);
 
-	virtual String to_string() override {
+	String _to_string() const {
 		return String("Tag({0})").format(variant_array(identifier));
 	}
 };

@@ -1,13 +1,20 @@
 #ifndef AS_EFFECT_H
 #define AS_EFFECT_H
 
+#include <godot_cpp/classes/resource.hpp>
+#include <godot_cpp/variant/variant.hpp>
+#include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/core/object.hpp>
+
 #include "../macros.hpp"
 #include "../status.hpp"
-#include "core/io/resource.h"
+
+using namespace godot;
 
 class AbilitySystem;
 
-class Effect : public Resource {
+class Effect : public Resource
+{
 	GDCLASS(Effect, Resource);
 
 private:
@@ -30,7 +37,7 @@ public:
 	/* Virtual methods */
 
 	virtual void _start(AbilitySystem *owner) {}
-	virtual Status _tick(AbilitySystem *owner, float delta) { return Status::RUNNING; }
+	virtual int _tick(AbilitySystem *owner, float delta) { return Status::RUNNING; }
 	virtual void _finish(AbilitySystem *owner) {}
 
 	/* Methods */
@@ -38,7 +45,8 @@ public:
 	Status tick(AbilitySystem *owner, float delta);
 	void start(AbilitySystem *owner);
 	void finish(AbilitySystem *owner);
-	virtual String to_string() override;
+	
+	String _to_string() const;
 };
 
 #endif

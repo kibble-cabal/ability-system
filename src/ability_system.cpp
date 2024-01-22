@@ -1,5 +1,7 @@
 #include "ability_system.h"
 
+#include <godot_cpp/core/class_db.hpp>
+
 #include "macros.hpp"
 #include "utils.hpp"
 
@@ -237,7 +239,7 @@ void AbilitySystem::revoke_tag(Ref<Tag> tag) {
  *** Other methods ***
  *********************/
 
-String AbilitySystem::to_string() {
+String AbilitySystem::_to_string() const {
 	Dictionary dict;
 	dict["tags"] = tags;
 	dict["abilities"] = abilities;

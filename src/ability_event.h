@@ -1,13 +1,17 @@
 #ifndef AS_ABILITYEVENT_HPP
 #define AS_ABILITYEVENT_HPP
 
+#include <godot_cpp/classes/resource.hpp>
+
 #include "ability.hpp"
-#include "core/io/resource.h"
 #include "status.hpp"
+
+using namespace godot;
 
 class AbilitySystem;
 
-class AbilityEvent : public Resource {
+class AbilityEvent : public Resource
+{
 	GDCLASS(AbilityEvent, Resource);
 
 private:
@@ -28,7 +32,7 @@ public:
 	void start(AbilitySystem *owner);
 	Status tick(AbilitySystem *owner, float delta);
 
-	virtual String to_string() override;
+	String _to_string() const;
 };
 
 #endif

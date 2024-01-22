@@ -1,13 +1,16 @@
 #ifndef AS_ABILITY_HPP
 #define AS_ABILITY_HPP
 
-#include "core/io/resource.h"
-#include "core/variant/typed_array.h"
+#include <godot_cpp/classes/resource.hpp>
+#include <godot_cpp/variant/typed_array.hpp>
+
 #include "effect/effect.h"
 #include "macros.hpp"
 #include "status.hpp"
 #include "tag.hpp"
 #include "utils.hpp"
+
+using namespace godot;
 
 class AbilitySystem;
 
@@ -19,7 +22,7 @@ enum EffectMode {
 static const auto EffectModePropertyHint = "Parallel:1,Sequential:2";
 
 class Ability : public Resource {
-	GDCLASS(Ability, Resource);
+	GDCLASS(Ability, Resource)
 
 	friend class AbilityEvent;
 
@@ -79,8 +82,8 @@ public:
 		effect_mode = (EffectMode)value;
 		emit_changed();
 	}
-
-	virtual String to_string() override {
+	
+	String _to_string() const {
 		return String("Ability({0})").format(variant_array(identifier));
 	}
 };

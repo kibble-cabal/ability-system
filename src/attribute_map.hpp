@@ -1,9 +1,14 @@
 #ifndef AS_ATTRIBUTEMAP_HPP
 #define AS_ATTRIBUTEMAP_HPP
 
+#include <godot_cpp/classes/resource.hpp>
+#include <godot_cpp/templates/hashfuncs.hpp>
+#include <godot_cpp/templates/hash_map.hpp>
+
 #include "attribute.hpp"
-#include "core/object/ref_counted.h"
 #include "map"
+
+using namespace godot;
 
 struct AttributeHasher {
 	static _FORCE_INLINE_ uint32_t hash(const Ref<Attribute> &attribute) {
@@ -23,9 +28,12 @@ struct AttributeComparator {
 	}
 };
 
+template <typename T>
+using AttributeHashMap = HashMap<Ref<Attribute>, T, AttributeHasher, AttributeComparator>;
+
 class AttributeMap {
 public:
-	HashMap<Ref<Attribute>, float, AttributeHasher, AttributeComparator> attributes;
+	AttributeHashMap<float> attributes;
 
 	Dictionary get_attribute_dict() const {
 		Dictionary dict = {};
@@ -36,8 +44,9 @@ public:
 
 	void set_attribute_dict(Dictionary value) {
 		attributes.clear();
-		for (int i = 0; i < value.size(); i++) {
-			Ref<Attribute> key = value.get_key_at_index(i);
+		Array keys = value.keys();
+		for (int i = 0; i < keys.size(); i++) {
+			Ref<Attribute> key = keys[i];
 			attributes[key] = value[key];
 		}
 	}

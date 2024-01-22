@@ -83,6 +83,6 @@ void AbilityEvent::tick_sequential(AbilitySystem *owner, float delta) {
 	}
 }
 
-String AbilityEvent::to_string() {
+String AbilityEvent::_to_string() const {
 	return String("AbilityEvent({0})").format(variant_array(ability->get_identifier()));
 }

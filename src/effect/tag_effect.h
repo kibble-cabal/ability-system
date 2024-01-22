@@ -31,7 +31,7 @@ public:
 
 	virtual void _start(AbilitySystem *owner) override;
 
-	virtual Status _tick(AbilitySystem *owner, float delta) override {
+	virtual int _tick(AbilitySystem *owner, float delta) override {
 		return Status::FINISHED;
 	}
 };

@@ -20,7 +20,7 @@ public:
 	GETSET_RESOURCE(float, min_effect)
 	GETSET_RESOURCE(float, max_effect)
 
-	virtual Status _tick(AbilitySystem *owner, float delta) override;
+	virtual int _tick(AbilitySystem *owner, float delta) override;
 };
 
 #endif

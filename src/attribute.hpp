@@ -1,9 +1,12 @@
 #ifndef AS_ATTRIBUTE_H
 #define AS_ATTRIBUTE_H
 
-#include "core/io/resource.h"
+#include <godot_cpp/classes/resource.hpp>
+
 #include "macros.hpp"
 #include "utils.hpp"
+
+using namespace godot;
 
 class Attribute : public Resource {
 	GDCLASS(Attribute, Resource);
@@ -48,7 +51,7 @@ public:
 	GETSET_RESOURCE(float, default_value)
 	GETSET_RESOURCE(Color, ui_color)
 
-	virtual String to_string() override {
+	String _to_string() const {
 		return String("Attribute({0})").format(variant_array(identifier));
 	}
 };
