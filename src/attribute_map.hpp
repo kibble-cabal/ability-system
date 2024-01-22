@@ -31,9 +31,12 @@ struct AttributeComparator {
 	}
 };
 
+template <typename T>
+using AttributeHashMap = HashMap<Ref<Attribute>, T, AttributeHasher, AttributeComparator>;
+
 class AttributeMap {
 public:
-	HashMap<Ref<Attribute>, float, AttributeHasher, AttributeComparator> attributes;
+	AttributeHashMap<float> attributes;
 
 	Dictionary get_attribute_dict() const {
 		Dictionary dict = {};

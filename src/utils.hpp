@@ -31,6 +31,13 @@ void for_each(TypedArray<Ty> array, Fn fn) {
 	}
 };
 
+template <typename Fn>
+void for_each(Array array, Fn fn) {
+	for (int i = 0; i < array.size(); i++) {
+		fn(array[i]);
+	}
+};
+
 template <typename Ty, typename Fn>
 void for_each_i(TypedArray<Ty> array, Fn fn) {
 	for (int i = 0; i < array.size(); i++) {
@@ -60,5 +67,12 @@ void try_connect(Object *obj, String signal_name, Callable callable) {
 	if (!obj->is_connected(signal_name, callable))
 		obj->connect(signal_name, callable);
 };
+
+static const Color contrast(Color color) {
+	if (color.get_luminance() < 0.5)
+		return Color(1, 1, 1);
+	else
+		return Color(0, 0, 0);
+}
 
 #endif
