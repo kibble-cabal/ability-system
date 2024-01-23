@@ -16,7 +16,8 @@ void AbilityViewer::_draw() {
     container.max_size = get_size();
     container.style = LabelStyle::filled;
     for_each(ability_system->get_abilities(), [&container](Ref<Ability> ability) {
-        container.add_label(ability->get_identifier(), ability->get_ui_color());
+        if (ability.is_valid())
+            container.add_label(ability->get_identifier(), ability->get_ui_color());
     });
     container.draw();
 }
@@ -27,7 +28,8 @@ Vector2 AbilityViewer::_get_minimum_size() const {
     RenderContainer container;
     container.max_size = Vector2(get_size().x, 0);
     for_each(get_ability_system()->get_abilities(), [&container](Ref<Ability> ability) {
-        container.add_label(ability->get_identifier());
+        if (ability.is_valid())
+            container.add_label(ability->get_identifier());
     });
     return container.total_size();
 }

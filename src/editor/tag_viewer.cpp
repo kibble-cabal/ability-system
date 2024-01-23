@@ -16,7 +16,8 @@ void TagViewer::_draw() {
     container.max_size = get_size();
     container.style = LabelStyle::outlined;
     for_each(ability_system->get_tags(), [&container](Ref<Tag> tag) {
-        container.add_label(tag->get_identifier(), tag->get_ui_color());
+        if (tag.is_valid())
+            container.add_label(tag->get_identifier(), tag->get_ui_color());
     });
     container.draw();
 }
@@ -27,7 +28,8 @@ Vector2 TagViewer::_get_minimum_size() const {
     RenderContainer container;
     container.max_size = Vector2(get_size().x, 0);
     for_each(get_ability_system()->get_tags(), [&container](Ref<Tag> tag) {
-        container.add_label(tag->get_identifier());
+        if (tag.is_valid())
+            container.add_label(tag->get_identifier());
     });
     return container.total_size();
 }

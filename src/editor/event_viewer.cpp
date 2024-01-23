@@ -18,14 +18,15 @@ RenderContainer EventViewer::make_container(float y_offset) {
 
 void EventViewer::add_header(RenderContainer *container, Ref<AbilityEvent> event) const {
     Ref<Ability> ability = event->get_ability();
-    String header = "Event: " + String(ability->get_identifier());
-    container->add_label(header, ability->get_ui_color());
+    String header = ability.is_valid() ? "Event: " + String(ability->get_identifier()) : "Event: <null>";
+    container->add_label(header, ability.is_valid() ? ability->get_ui_color() : Color(0, 0, 0, 0));
 }
 
 void EventViewer::add_effects(RenderContainer *container, Ref<AbilityEvent> event) const {
     container->style = LabelStyle::outlined;
     for_each(event->get_effect_instances(), [&](Ref<Effect> effect) {
-        container->add_label(effect->get_ui_name(), effect->get_ui_color());
+        if (effect.is_valid())
+            container->add_label(effect->get_ui_name(), effect->get_ui_color());
     });
 }
 
@@ -45,7 +46,8 @@ void EventViewer::_draw() {
         container.new_line();
         add_effects(&container, event);
         container.draw();
-        container.draw_outline(Color(event->get_ability()->get_ui_color(), 0.5));
+        if (event->get_ability().is_valid())
+            container.draw_outline(Color(event->get_ability()->get_ui_color(), 0.5));
         y_offset += container.total_size().height + 2;
     });
 }

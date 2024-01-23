@@ -20,6 +20,8 @@ void AttributeViewer::_draw() {
     auto keys = dict.keys();
     for (int i = 0; i < keys.size(); i++) {
         Ref<Attribute> attribute = keys[i];
+        if (attribute.is_null())
+            continue;
         float percent = ability_system->get_attribute_map()->get_percent(attribute);
         container.add_progress(attribute->get_identifier(), percent, attribute->get_ui_color());
     }
@@ -35,6 +37,8 @@ Vector2 AttributeViewer::_get_minimum_size() const {
     auto keys = dict.keys();
     for (int i = 0; i < keys.size(); i++) {
         Ref<Attribute> attribute = keys[i];
+        if (attribute.is_null())
+            continue;
         container.add_progress(attribute->get_identifier());
     }
     return container.total_size();
