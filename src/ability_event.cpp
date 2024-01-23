@@ -65,8 +65,8 @@ void AbilityEvent::tick_parallel(AbilitySystem *owner, float delta) {
 	});
 
 	// Remove all finished effects.
-	for (auto it = finished_effects.rbegin(); it != finished_effects.rend(); ++it)
-		effect_instances.remove_at(*it);
+	for (int i = finished_effects.size() - 1; i >= 0; i--)
+		effect_instances.remove_at(finished_effects[i]);
 }
 
 void AbilityEvent::tick_sequential(AbilitySystem *owner, float delta) {
