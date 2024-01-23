@@ -1,6 +1,7 @@
 #include "ability_system.h"
 
 #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/variant/utility_functions.hpp>
 
 #include "macros.hpp"
 #include "utils.hpp"
@@ -155,10 +156,8 @@ void AbilitySystem::modify_attribute_value(Ref<Attribute> attribute, float by_am
  *** Ability methods ***
  ***********************/
 
-bool AbilitySystem::has_ability(Ref<Ability> ability_to_check) const {
-	return any(abilities, [ability_to_check](Ref<Ability> ability) {
-		return ability == ability_to_check;
-	});
+bool AbilitySystem::has_ability(Ref<Ability> ability) const {
+	return abilities.has(ability);
 }
 
 void AbilitySystem::grant_ability(Ref<Ability> ability) {
@@ -183,7 +182,8 @@ bool AbilitySystem::can_activate(Ref<Ability> ability) const {
 
 Ref<AbilityEvent> AbilitySystem::activate(Ref<Ability> ability) {
 	if (can_activate(ability)) {
-		auto event = memnew(AbilityEvent);
+		Ref<AbilityEvent> event;
+		event.instantiate();
 		events.append(event);
 		event->set_ability(ability);
 		event->start(this);
@@ -202,9 +202,7 @@ Ref<AbilityEvent> AbilitySystem::activate(Ref<Ability> ability) {
  *******************/
 
 bool AbilitySystem::has_tag(Ref<Tag> tag_to_check) const {
-	return any(tags, [tag_to_check](Ref<Tag> tag) {
-		return tag == tag_to_check;
-	});
+	return tags.has(tag_to_check);
 }
 
 bool AbilitySystem::has_some_tags(TypedArray<Tag> tags_to_check) const {

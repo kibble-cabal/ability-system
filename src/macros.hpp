@@ -56,8 +56,10 @@
 	GETTER(ty, prop_name)              \
 	SETTER_RESOURCE(ty, prop_name)
 
-#define stringify_variants(arg) UtilityFunctions::str(arg)
+#define stringify(...) UtilityFunctions::str(__VA_ARGS__)
 #define print_error(arg) UtilityFunctions::printerr(arg)
 #define RANDF_RANGE(min, max) UtilityFunctions::randf_range(min, max)
+
+#define fmt(string, args...) String(string).format(variant_array(args))
 
 #endif

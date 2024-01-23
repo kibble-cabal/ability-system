@@ -205,7 +205,7 @@ public:
 	}
 
 	std::pair<RenderLabel *, RenderProgress *> add_progress(String name, float value = 0.0, Color color = Color(1, 1, 1)) {
-		String string = name + " " + stringify_variants(value * 100).left(5) + "%";
+		String string = name + " " + stringify(value * 100).left(5) + "%";
 		RenderLabel *label = add_label(string, color);
 		RenderProgress progress;
 		progress.rect.size = Vector2(remaining_width(), font_size()).abs();

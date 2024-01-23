@@ -3,6 +3,7 @@
 
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/variant/typed_array.hpp>
+#include <godot_cpp/variant/utility_functions.hpp>
 
 #include "effect/effect.h"
 #include "macros.hpp"
@@ -84,7 +85,7 @@ public:
 	}
 	
 	String _to_string() const {
-		return String("Ability({0})").format(variant_array(identifier));
+		return fmt("Ability({0})", this->get_identifier());
 	}
 };
 

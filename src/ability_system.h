@@ -97,7 +97,7 @@ public:
 		emit_signal(as_signal::AbilitiesChanged);
 	}
 	bool can_activate(Ref<Ability> ability) const;
-	bool has_ability(Ref<Ability> ability_to_check) const;
+	bool has_ability(Ref<Ability> ability) const;
 	void grant_ability(Ref<Ability> ability);
 	void revoke_ability(Ref<Ability> ability);
 	Ref<AbilityEvent> activate(Ref<Ability> ability);
