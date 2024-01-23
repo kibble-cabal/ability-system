@@ -77,6 +77,7 @@ This is where the bulk of your custom game logic will go. It has access to the `
 * `AttributeEffect` - modifies an `Attribute`
 * `TagEffect` - adds or removes `Tag`s from `AbilitySystem`
 * `WaitEffect` - arbitrarily delays `AbilityEvent`
+* `TryActivateAbilityEffect` - attempts to activate an `Ability` on the `AbilitySystem`
 
 ### `Tag`
 

@@ -15,6 +15,7 @@
 #include "effect/attribute_effect.h"
 #include "effect/tag_effect.h"
 #include "effect/wait_effect.hpp"
+#include "effect/try_activate_ability_effect.h"
 
 // Editor
 #include "editor/viewer_base.h"
@@ -45,6 +46,7 @@ void initialize_ability_system_module(ModuleInitializationLevel p_level) {
 		ClassDB::register_class<WaitEffect>();
 		ClassDB::register_class<AttributeEffect>();
 		ClassDB::register_class<TagEffect>();
+		ClassDB::register_class<TryActivateAbilityEffect>();
 		ClassDB::register_class<AbilitySystem>();
 
 		// Editor

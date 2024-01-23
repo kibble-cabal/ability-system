@@ -23,8 +23,8 @@ int AttributeEffect::_tick(AbilitySystem *owner, float delta) {
 		float effect = RANDF_RANGE(min_effect, max_effect);
 		owner->modify_attribute_value(attribute, effect);
 	} else {
-		print_error("Searching for attribute: " + stringify_variants(attribute));
-		print_error("Owner missing attribute! (attributes are " + stringify_variants(owner->get_attribute_dict()) + ")");
+		print_error("Searching for attribute: " + stringify(attribute));
+		print_error("Owner missing attribute! (attributes are " + stringify(owner->get_attribute_dict()) + ")");
 	}
 	return Status::FINISHED;
 }

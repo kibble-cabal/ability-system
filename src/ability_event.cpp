@@ -20,10 +20,12 @@ void AbilityEvent::_bind_methods() {
 void AbilityEvent::start(AbilitySystem *owner) {
 	status = Status::READY;
 	effect_instances.clear();
-	for_each(this->ability->get_effects(), [this, owner](Ref<Effect> effect) {
-		Ref<Effect> instance = effect->duplicate(true);
+	for_each_i(this->ability->get_effects(), [this, owner](Ref<Effect> effect, int i) {
+		Ref<Effect> instance = effect->duplicate(false);
 		effect_instances.append(instance);
-		instance->start(owner);
+		// Start the first effect (when in sequential mode) or all effects (when in parallel mode)
+		if (i == 0 || ability->effect_mode == EffectMode::PARALLEL)
+			instance->start(owner);
 	});
 	status = Status::RUNNING;
 }
@@ -70,16 +72,23 @@ void AbilityEvent::tick_parallel(AbilitySystem *owner, float delta) {
 }
 
 void AbilityEvent::tick_sequential(AbilitySystem *owner, float delta) {
+	Status current_status = Status::READY;
 	// Tick the first effect, if it exists.
 	if (effect_instances.size()) {
 		Ref<Effect> effect = effect_instances[0];
-		Status effect_status = effect->tick(owner, delta);
+		current_status = effect->tick(owner, delta);
 		// If the first effect is finished, remove it from the list.
-		if (effect_status == Status::FINISHED) {
+		if (current_status == Status::FINISHED) {
 			effect_instances.pop_front();
 			emit_signal(as_signal::EffectFinished, effect);
 			owner->emit_signal(as_signal::EffectsChanged);
 		}
+	}
+
+	// Start the next effect, if it exists and is not already running.
+	if (current_status != Status::RUNNING && effect_instances.size()) {
+		Ref<Effect> effect = effect_instances[0];
+		effect->start(owner);
 	}
 }
 
