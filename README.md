@@ -20,12 +20,12 @@ This extension provides a framework for implementing game mechanics. It's inspir
 
 ### If you want to include the source files
 1. Clone this repository somewhere into your project files
-2. Update `ability_system.gdextension` with the path to the `bin` folder in your project
+2. Update `ability_system.gdextension` with the path to the `bin` folder in your project, if necessary
 3. Open or restart Godot
 
 ### If you just want the build
 1. Copy the `bin` folder and the `ability_system.gdextension` file somewhere into your project
-2. Update `ability_system.gdextension` with the path to the `bin` folder in your project
+2. Update `ability_system.gdextension` with the path to the `bin` folder in your project, if necessary
 3. Open or restart Godot
 
 ## Class overview
