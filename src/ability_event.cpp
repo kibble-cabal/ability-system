@@ -62,6 +62,7 @@ void AbilityEvent::tick_parallel(AbilitySystem *owner, float delta) {
 		// Make a list of all finished effects.
 		if (effect->tick(owner, delta) == Status::FINISHED) {
 			finished_effects.push_back(i);
+			effect->finish(owner);
 			emit_signal(as_signal::EffectFinished, effect);
 		}
 	});
@@ -80,6 +81,7 @@ void AbilityEvent::tick_sequential(AbilitySystem *owner, float delta) {
 		// If the first effect is finished, remove it from the list.
 		if (current_status == Status::FINISHED) {
 			effect_instances.pop_front();
+			effect->finish(owner);
 			emit_signal(as_signal::EffectFinished, effect);
 			owner->emit_signal(as_signal::EffectsChanged);
 		}
