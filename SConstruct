@@ -7,6 +7,7 @@ sources = (
     Glob("src/*.cpp")
     + Glob("src/effect/*.cpp")
     + Glob("src/editor/*.cpp")
+    + Glob("src/viewer/*.cpp")
     + Glob("src/editor/attribute_inspector/*.cpp")
     + Glob("src/editor/tag_inspector/*.cpp")
 )

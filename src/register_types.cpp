@@ -17,13 +17,13 @@
 #include "effect/wait_effect.hpp"
 #include "effect/try_activate_ability_effect.h"
 
-// Editor
-#include "editor/viewer_base.h"
-#include "editor/ability_viewer.h"
-#include "editor/attribute_viewer.h"
-#include "editor/event_viewer.h"
-#include "editor/tag_viewer.h"
-#include "editor/ability_system_viewer.hpp"
+// Viewer
+#include "viewer/viewer_base.h"
+#include "viewer/ability_viewer.h"
+#include "viewer/attribute_viewer.h"
+#include "viewer/event_viewer.h"
+#include "viewer/tag_viewer.h"
+#include "viewer/ability_system_viewer.hpp"
 
 // Editor: Attribute Inspector
 #include "editor/attribute_inspector/plugin.hpp"
