@@ -34,6 +34,7 @@ TagEffect = "assets/tag_effect_icon.svg"
 AttributeEffect = "assets/attribute_effect_icon.svg"
 WaitEffect = "assets/wait_effect_icon.svg"
 TryActivateAbilityEffect = "assets/try_activate_ability_effect_icon.svg"
+LoopEffect = "assets/loop_effect_icon.svg"
 
 TagViewer = "assets/tag_viewer_icon.svg"
 AbilityViewer = "assets/ability_viewer_icon.svg"

@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bo48a8fkvsbhv"
-path="res://.godot/imported/ability_event_icon.svg-a3a42314babea91a846c67b2be9a2d67.ctex"
+uid="uid://4kxoop8pgavr"
+path="res://.godot/imported/loop_effect_icon.svg-8e00ef0cd564a4f166f0496147c34909.ctex"
 metadata={
 "has_editor_variant": true,
 "vram_texture": false
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://extensions/ability_system/assets/ability_event_icon.svg"
-dest_files=["res://.godot/imported/ability_event_icon.svg-a3a42314babea91a846c67b2be9a2d67.ctex"]
+source_file="res://extensions/ability_system/assets/loop_effect_icon.svg"
+dest_files=["res://.godot/imported/loop_effect_icon.svg-8e00ef0cd564a4f166f0496147c34909.ctex"]
 
 [params]
 
