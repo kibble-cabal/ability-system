@@ -2,6 +2,8 @@
 #define AS_SIGNAL_HPP
 
 namespace as_signal {
+
+// `AbilitySystem` signals
 static const auto EventBlocked = "ability_event_blocked";
 static const auto EventFinished = "ability_event_finished";
 static const auto EventStarted = "ability_event_started";
@@ -16,8 +18,14 @@ static const auto AttributeGranted = "attribute_granted";
 static const auto AttributeRevoked = "attribute_revoked";
 static const auto AttributeValueChanged = "attribute_value_changed";
 static const auto AttributesChanged = "attributes_changed";
-static const auto EffectFinished = "effect_finished";
 static const auto EffectsChanged = "effects_changed";
+
+// `AbilityEvent` signals
+static const auto Started = "started";
+static const auto Finished = "finished";
+static const auto EffectStarted = "effect_started";
+static const auto EffectFinished = "effect_finished";
+
 }; //namespace as_signal
 
 #endif

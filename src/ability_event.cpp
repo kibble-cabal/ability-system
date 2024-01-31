@@ -14,7 +14,10 @@ void AbilityEvent::_bind_methods() {
 	ARRAY_PROP(effect_instances, RESOURCE_TYPE_HINT("Effect"));
 
 	/* Bind signals */
-	ADD_SIGNAL(MethodInfo(as_signal::EffectFinished, OBJECT_PROP_INFO(Effect, effect)));
+	ADD_SIGNAL(MethodInfo(as_signal::Started, OBJECT_PROP_INFO(AbilitySystem, owner)));
+	ADD_SIGNAL(MethodInfo(as_signal::Finished, OBJECT_PROP_INFO(AbilitySystem, owner)));
+	ADD_SIGNAL(MethodInfo(as_signal::EffectStarted, OBJECT_PROP_INFO(AbilitySystem, owner), OBJECT_PROP_INFO(Effect, effect_instance)));
+	ADD_SIGNAL(MethodInfo(as_signal::EffectFinished, OBJECT_PROP_INFO(AbilitySystem, owner), OBJECT_PROP_INFO(Effect, effect_instance)));
 }
 
 void AbilityEvent::start(AbilitySystem *owner) {
@@ -24,9 +27,12 @@ void AbilityEvent::start(AbilitySystem *owner) {
 		Ref<Effect> instance = effect->duplicate(false);
 		effect_instances.append(instance);
 		// Start the first effect (when in sequential mode) or all effects (when in parallel mode)
-		if (i == 0 || ability->effect_mode == EffectMode::PARALLEL)
+		if (i == 0 || ability->effect_mode == EffectMode::PARALLEL) {
 			instance->start(owner);
+			emit_signal(as_signal::EffectStarted, owner, instance);
+		}
 	});
+	emit_signal(as_signal::Started, owner);
 	status = Status::RUNNING;
 }
 
@@ -44,11 +50,11 @@ Status AbilityEvent::tick(AbilitySystem *owner, float delta) {
 	}
 
 	// If all effects have been removed, the event is finished processing.
-	if (effect_instances.size() == 0)
+	if (effect_instances.size() == 0) {
 		status = Status::FINISHED;
-
+		emit_signal(as_signal::Finished, owner);
 	// Otherwise, it is still running.
-	else
+	} else
 		status = Status::RUNNING;
 
 	return status;
@@ -63,7 +69,7 @@ void AbilityEvent::tick_parallel(AbilitySystem *owner, float delta) {
 		if (effect->tick(owner, delta) == Status::FINISHED) {
 			finished_effects.push_back(i);
 			effect->finish(owner);
-			emit_signal(as_signal::EffectFinished, effect);
+			emit_signal(as_signal::EffectFinished, owner, effect);
 		}
 	});
 
@@ -82,7 +88,7 @@ void AbilityEvent::tick_sequential(AbilitySystem *owner, float delta) {
 		if (current_status == Status::FINISHED) {
 			effect_instances.pop_front();
 			effect->finish(owner);
-			emit_signal(as_signal::EffectFinished, effect);
+			emit_signal(as_signal::EffectFinished, owner, effect);
 			owner->emit_signal(as_signal::EffectsChanged);
 		}
 	}
@@ -91,6 +97,7 @@ void AbilityEvent::tick_sequential(AbilitySystem *owner, float delta) {
 	if (current_status != Status::RUNNING && effect_instances.size()) {
 		Ref<Effect> effect = effect_instances[0];
 		effect->start(owner);
+		emit_signal(as_signal::EffectStarted, owner, effect);
 	}
 }
 
