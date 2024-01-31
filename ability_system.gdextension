@@ -21,3 +21,22 @@ android.debug.x86_64 = "bin/libability_system.android.template_debug.x86_64.so"
 android.release.x86_64 = "bin/libability_system.android.template_release.x86_64.so"
 android.debug.arm64 = "bin/libability_system.android.template_debug.arm64.so"
 android.release.arm64 = "bin/libability_system.android.template_release.arm64.so"
+
+[icons]
+Ability = "assets/ability_icon.svg"
+AbilitySystem = "assets/ability_system_icon.svg"
+Attribute = "assets/attribute_icon.svg"
+Effect = "assets/effect_icon.svg"
+Tag = "assets/tag_icon.svg"
+Event = "assets/ability_event_icon.svg"
+
+TagEffect = "assets/tag_effect_icon.svg"
+AttributeEffect = "assets/attribute_effect_icon.svg"
+WaitEffect = "assets/wait_effect_icon.svg"
+TryActivateAbilityEffect = "assets/try_activate_ability_effect_icon.svg"
+
+TagViewer = "assets/tag_viewer_icon.svg"
+AbilityViewer = "assets/ability_viewer_icon.svg"
+EventViewer = "assets/event_viewer_icon.svg"
+AttributeViewer = "assets/attribute_viewer_icon.svg"
+AbilitySystemViewer = "assets/ability_system_viewer_icon.svg"
