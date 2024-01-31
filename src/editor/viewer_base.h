@@ -19,6 +19,8 @@ private:
 protected:
 	static void _bind_methods();
 
+	void connect_all();
+
 	/// @brief Connects all existing tags to prompt a redraw when any property is changed.
 	void connect_to_tags();
 
@@ -32,8 +34,8 @@ protected:
 	void connect_to_events();
 
 public:
-	GETSET(NodePath, ability_system_path)
-
+	GETTER(NodePath, ability_system_path)
+	void set_ability_system_path(NodePath value);
 	AbilitySystem *get_ability_system() const;
 
 	void _notification(int what);

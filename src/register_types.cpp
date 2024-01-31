@@ -23,6 +23,7 @@
 #include "editor/attribute_viewer.h"
 #include "editor/event_viewer.h"
 #include "editor/tag_viewer.h"
+#include "editor/ability_system_viewer.hpp"
 
 // Editor: Attribute Inspector
 #include "editor/attribute_inspector/plugin.hpp"
@@ -50,7 +51,8 @@ void initialize_ability_system_module(ModuleInitializationLevel p_level) {
 		ClassDB::register_class<AbilitySystem>();
 
 		// Editor
-		ClassDB::register_class<AbilitySystemViewerBase>();
+		ClassDB::register_internal_class<AbilitySystemViewerBase>();
+		ClassDB::register_class<AbilitySystemViewer>();
 		ClassDB::register_class<TagViewer>();
 		ClassDB::register_class<AttributeViewer>();
 		ClassDB::register_class<AbilityViewer>();
