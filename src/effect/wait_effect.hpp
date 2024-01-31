@@ -18,14 +18,17 @@ protected:
 	static void _bind_methods() {
 		BIND_GETSET(WaitEffect, min_wait_time);
 		BIND_GETSET(WaitEffect, max_wait_time);
+		BIND_GETSET(WaitEffect, wait_time);
 
 		PROP(Variant::FLOAT, min_wait_time);
 		PROP(Variant::FLOAT, max_wait_time);
+		NO_EDITOR_PROP(Variant::FLOAT, wait_time);
 	}
 
 public:
 	GETSET_RESOURCE(float, min_wait_time)
 	GETSET_RESOURCE(float, max_wait_time)
+	GETSET(float, wait_time)
 
 	virtual void _start(AbilitySystem *owner) override {
 		wait_time = RANDF_RANGE(min_wait_time, max_wait_time);

@@ -16,6 +16,7 @@
 #include "effect/tag_effect.h"
 #include "effect/wait_effect.hpp"
 #include "effect/try_activate_ability_effect.h"
+#include "effect/loop_effect.h"
 
 // Viewer
 #include "viewer/viewer_base.h"
@@ -43,14 +44,17 @@ void initialize_ability_system_module(ModuleInitializationLevel p_level) {
 		ClassDB::register_class<AbilityEvent>();
 		ClassDB::register_class<Attribute>();
 		ClassDB::register_class<Tag>();
+		ClassDB::register_class<AbilitySystem>();
 		ClassDB::register_class<Effect>();
+
+		// Effects
 		ClassDB::register_class<WaitEffect>();
 		ClassDB::register_class<AttributeEffect>();
 		ClassDB::register_class<TagEffect>();
 		ClassDB::register_class<TryActivateAbilityEffect>();
-		ClassDB::register_class<AbilitySystem>();
+		ClassDB::register_class<LoopEffect>();
 
-		// Editor
+		// Viewers
 		ClassDB::register_internal_class<AbilitySystemViewerBase>();
 		ClassDB::register_class<AbilitySystemViewer>();
 		ClassDB::register_class<TagViewer>();

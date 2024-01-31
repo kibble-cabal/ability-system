@@ -22,8 +22,13 @@ private:
 protected:
 	static void _bind_methods();
 
+	void start_effect(AbilitySystem *owner, Ref<Effect> effect_instance);
+	void finish_effect(AbilitySystem *owner, Ref<Effect> effect_instance);
+
 	void tick_parallel(AbilitySystem *owner, float delta);
 	void tick_sequential(AbilitySystem *owner, float delta);
+
+	void do_loop(AbilitySystem *owner);
 
 public:
 	GETSET_RESOURCE(Ref<Ability>, ability)

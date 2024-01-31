@@ -17,12 +17,16 @@ class Effect : public Resource
 {
 	GDCLASS(Effect, Resource);
 
+	friend class AbilityEvent;
+
 private:
 	float elapsed_time = 0.0;
 
 	/* UI properties */
 	StringName ui_name;
 	Color ui_color;
+
+	int index;
 
 protected:
 	static void _bind_methods();
@@ -42,9 +46,17 @@ public:
 
 	/* Methods */
 
+	Ref<Effect> instantiate(int index) const {
+		Ref<Effect> instance = duplicate(false);
+		instance->index = index;
+		return instance;
+	}
+
 	Status tick(AbilitySystem *owner, float delta);
 	void start(AbilitySystem *owner);
 	void finish(AbilitySystem *owner);
+
+	virtual bool is_loop_effect() { return false; }
 	
 	String _to_string() const;
 };

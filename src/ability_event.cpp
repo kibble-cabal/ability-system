@@ -4,6 +4,7 @@
 #include "macros.hpp"
 #include "utils.hpp"
 
+
 void AbilityEvent::_bind_methods() {
 	/* Bind methods */
 	BIND_GETSET(AbilityEvent, ability);
@@ -20,17 +21,27 @@ void AbilityEvent::_bind_methods() {
 	ADD_SIGNAL(MethodInfo(as_signal::EffectFinished, OBJECT_PROP_INFO(AbilitySystem, owner), OBJECT_PROP_INFO(Effect, effect_instance)));
 }
 
+void AbilityEvent::start_effect(AbilitySystem *owner, Ref<Effect> effect_instance) {
+	effect_instance->start(owner);
+	emit_signal(as_signal::EffectStarted, owner, effect_instance);
+	owner->emit_signal(as_signal::EffectsChanged);
+}
+
+void AbilityEvent::finish_effect(AbilitySystem *owner, Ref<Effect> effect_instance) {
+	effect_instance->finish(owner);
+	emit_signal(as_signal::EffectFinished, owner, effect_instance);
+	owner->emit_signal(as_signal::EffectsChanged);
+}
+
 void AbilityEvent::start(AbilitySystem *owner) {
 	status = Status::READY;
 	effect_instances.clear();
 	for_each_i(this->ability->get_effects(), [this, owner](Ref<Effect> effect, int i) {
-		Ref<Effect> instance = effect->duplicate(false);
+		Ref<Effect> instance = effect->instantiate(i);
 		effect_instances.append(instance);
 		// Start the first effect (when in sequential mode) or all effects (when in parallel mode)
-		if (i == 0 || ability->effect_mode == EffectMode::PARALLEL) {
-			instance->start(owner);
-			emit_signal(as_signal::EffectStarted, owner, instance);
-		}
+		if (i == 0 || ability->effect_mode == EffectMode::PARALLEL)
+			start_effect(owner, instance);
 	});
 	emit_signal(as_signal::Started, owner);
 	status = Status::RUNNING;
@@ -39,14 +50,30 @@ void AbilityEvent::start(AbilitySystem *owner) {
 Status AbilityEvent::tick(AbilitySystem *owner, float delta) {
 	if (status != Status::RUNNING)
 		return status;
-
-	switch (ability->effect_mode) {
-		case EffectMode::PARALLEL:
-			tick_parallel(owner, delta);
-			break;
-		case EffectMode::SEQUENTIAL:
-			tick_sequential(owner, delta);
-			break;
+	
+	if (effect_instances.size() > 0 && ((Ref<Effect>)effect_instances[0])->is_loop_effect()) {
+		Ref<Effect> current_effect = effect_instances[0];
+		// If there's a running loop effect, perform the loop.
+		switch (current_effect->tick(owner, delta)) {
+			case Status::READY:
+				break;
+			case Status::RUNNING:
+				do_loop(owner);
+				break;
+			case Status::FINISHED: {
+				effect_instances.pop_front();
+				finish_effect(owner, current_effect);
+			} break;
+		}
+	} else {
+		switch (ability->effect_mode) {
+			case EffectMode::PARALLEL:
+				tick_parallel(owner, delta);
+				break;
+			case EffectMode::SEQUENTIAL:
+				tick_sequential(owner, delta);
+				break;
+		}
 	}
 
 	// If all effects have been removed, the event is finished processing.
@@ -66,10 +93,10 @@ void AbilityEvent::tick_parallel(AbilitySystem *owner, float delta) {
 	// Tick every effect.
 	for_each_i(effect_instances, [&](Ref<Effect> effect, int i) {
 		// Make a list of all finished effects.
+		if (effect->is_loop_effect()) return;
 		if (effect->tick(owner, delta) == Status::FINISHED) {
 			finished_effects.push_back(i);
-			effect->finish(owner);
-			emit_signal(as_signal::EffectFinished, owner, effect);
+			finish_effect(owner, effect);
 		}
 	});
 
@@ -87,17 +114,25 @@ void AbilityEvent::tick_sequential(AbilitySystem *owner, float delta) {
 		// If the first effect is finished, remove it from the list.
 		if (current_status == Status::FINISHED) {
 			effect_instances.pop_front();
-			effect->finish(owner);
-			emit_signal(as_signal::EffectFinished, owner, effect);
-			owner->emit_signal(as_signal::EffectsChanged);
+			finish_effect(owner, effect);
 		}
 	}
 
-	// Start the next effect, if it exists and is not already running.
-	if (current_status != Status::RUNNING && effect_instances.size()) {
-		Ref<Effect> effect = effect_instances[0];
-		effect->start(owner);
-		emit_signal(as_signal::EffectStarted, owner, effect);
+	if (effect_instances.size() && current_status != Status::RUNNING) {
+		Ref<Effect> current_effect = effect_instances[0];
+		start_effect(owner, current_effect);
+	}
+}
+
+void AbilityEvent::do_loop(AbilitySystem *owner) {
+	Ref<Effect> loop_effect = effect_instances[0];
+	
+	for (int i = loop_effect->index - 1; i >= 0; i--) {
+		Ref<Effect> effect = ability->get_effects()[i];
+		Ref<Effect> instance = effect->instantiate(i);
+		effect_instances.push_front(instance);
+		if (i == 0 || ability->effect_mode == EffectMode::PARALLEL)
+			start_effect(owner, instance);
 	}
 }
 
