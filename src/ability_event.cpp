@@ -134,6 +134,17 @@ void AbilityEvent::do_loop(AbilitySystem *owner) {
 		if (i == 0 || ability->effect_mode == EffectMode::PARALLEL)
 			start_effect(owner, instance);
 	}
+
+	emit_signal(as_signal::EffectsChanged);
+}
+
+Ref<Effect> AbilityEvent::get_effect_instance(Ref<Effect> effect, int index) const {
+	for (int i = 0; i < effect_instances.size(); i++) {
+		Ref<Effect> instance = effect_instances[i];
+		if (instance->instantiated_from == effect && instance->index == index)
+			return instance;
+	}
+	return nullptr;
 }
 
 String AbilityEvent::_to_string() const {

@@ -30,15 +30,19 @@ void Effect::_bind_methods() {
 
 Status Effect::tick(AbilitySystem *owner, float delta) {
 	elapsed_time += delta;
-	return (Status)_tick(owner, delta);
+	last_status = (Status)_tick(owner, delta);
+	return last_status;
 }
 
 void Effect::start(AbilitySystem *owner) {
 	elapsed_time = 0;
+	last_status = Status::READY;
 	_start(owner);
+	last_status = Status::RUNNING;
 }
 
 void Effect::finish(AbilitySystem *owner) {
+	last_status = Status::FINISHED;
 	_finish(owner);
 }
 

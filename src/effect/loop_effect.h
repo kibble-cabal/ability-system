@@ -16,6 +16,7 @@ protected:
         BIND_GETSET(LoopEffect, max_loops);
         BIND_GETSET(LoopEffect, elapsed_loops);
         PROP(Variant::INT, max_loops);
+        NO_EDITOR_PROP(Variant::INT, elapsed_loops);
     }
 
 public:

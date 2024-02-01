@@ -26,6 +26,9 @@ private:
 	StringName ui_name;
 	Color ui_color;
 
+	/* Internal properties */
+	Status last_status = Status::READY;
+	Ref<Effect> instantiated_from;
 	int index;
 
 protected:
@@ -38,6 +41,10 @@ public:
 	GETSET_RESOURCE(StringName, ui_name)
 	GETSET_RESOURCE(Color, ui_color)
 
+	Status get_last_status() const {
+		return last_status;
+	}
+
 	/* Virtual methods */
 
 	virtual void _start(AbilitySystem *owner) {}
@@ -48,6 +55,7 @@ public:
 
 	Ref<Effect> instantiate(int index) const {
 		Ref<Effect> instance = duplicate(false);
+		instance->instantiated_from = this;
 		instance->index = index;
 		return instance;
 	}

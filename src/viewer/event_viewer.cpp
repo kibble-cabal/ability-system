@@ -24,10 +24,36 @@ void EventViewer::add_header(RenderContainer *container, Ref<AbilityEvent> event
 
 void EventViewer::add_effects(RenderContainer *container, Ref<AbilityEvent> event) const {
     container->style = LabelStyle::outlined;
-    for_each(event->get_effect_instances(), [&](Ref<Effect> effect) {
-        if (effect.is_valid())
-            container->add_label(effect->get_ui_name(), effect->get_ui_color());
-    });
+    Ref<Ability> ability = event->get_ability();
+    TypedArray<Effect> effects = ability->get_effects();
+    TypedArray<Effect> instances = event->get_effect_instances();
+
+    for (int i = 0; i < effects.size(); i++) {
+        Ref<Effect> effect = effects[i];
+        Ref<Effect> instance = event->get_effect_instance(effect, i);
+        // If the instance does not exist, it's already been finished and removed.
+        Status status = instance.is_valid() ? instance->get_last_status() : Status::FINISHED;
+        String text = effect->get_ui_name();
+        // For looped effects, add a counter.
+        if (instance.is_valid() && instance->is_loop_effect())
+            text += stringify(" (loop ", (int)(instance->get("elapsed_loops")) + 1, ")");
+        switch (status) {
+            case Status::RUNNING:
+                container->add_label(text, effect->get_ui_color());
+                break;
+            case Status::FINISHED:
+                container->add_text_strike_label(text, Color(effect->get_ui_color(), 0.5));
+                break;
+            default:
+                container->add_text_label(text, Color(effect->get_ui_color(), 0.5));
+        }
+
+        // Add "→" or "&" icon
+        if (i < (effects.size() - 1)) {
+            String icon = ability->get_effect_mode() == EffectMode::PARALLEL ? " & " : String::utf8(" → ");
+            container->add_text_label(icon, Color(ability->get_ui_color(), 0.5));
+        }
+    }
 }
 
 /* Override other event listeners to avoid unnecessary processing */

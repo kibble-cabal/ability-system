@@ -52,7 +52,8 @@ public:
 enum LabelStyle {
 	filled,
 	outlined,
-	text
+	text,
+	text_strike
 };
 
 struct RenderLabel : Drawable {
@@ -89,11 +90,20 @@ public:
 		canvas->draw_string(font(), string_pos(), string, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size(), color);
 	}
 
+	void draw_text_strike() const {
+		if (!can_draw())
+			return;
+		draw_text();
+		Vector2 start = string_pos() - Vector2(0, font_size() * 0.3), 
+				end = start + Vector2(string_size(string).x, 0);
+		canvas->draw_line(start, end, color, 1);
+	}
+
 	void draw_outlined() const {
 		if (!can_draw())
 			return;
-		canvas->draw_rect(bbox(), Color(color, 0.1));
-		canvas->draw_rect(bbox(), Color(color, 0.5), false, 1);
+		canvas->draw_rect(bbox(), Color(color, color.a * 0.1));
+		canvas->draw_rect(bbox(), Color(color, color.a * 0.5), false, 1);
 		canvas->draw_string(font(), string_pos(), string, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size(), color);
 	}
 
@@ -108,6 +118,9 @@ public:
 			case LabelStyle::text:
 				draw_text();
 				break;
+			case LabelStyle::text_strike:
+				draw_text_strike();
+				break;
 		}
 	}
 };
@@ -120,7 +133,7 @@ public:
 	virtual void draw() override {
 		if (!can_draw())
 			return;
-		canvas->draw_rect(rect, Color(color, 0.15));
+		canvas->draw_rect(rect, Color(color, color.a * 0.15));
 		canvas->draw_rect(Rect2(rect.position, rect.size * Vector2(value, 1)), color);
 	}
 };
@@ -195,6 +208,18 @@ public:
 		if (!can_draw())
 			return;
 		canvas->draw_rect(total_rect().grow(2), color, false, 1);
+	}
+
+	RenderLabel *add_text_label(String string, Color color = Color(1, 1, 1)) {
+		auto label = add_label(string, color);
+		label->style = LabelStyle::text;
+		return label;
+	}
+
+	RenderLabel *add_text_strike_label(String string, Color color = Color(1, 1, 1)) {
+		auto label = add_label(string, color);
+		label->style = LabelStyle::text_strike;
+		return label;
 	}
 
 	RenderLabel *add_label(String string, Color color = Color(1, 1, 1)) {

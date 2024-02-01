@@ -34,6 +34,8 @@ public:
 	GETSET_RESOURCE(Ref<Ability>, ability)
 	GETSET_RESOURCE(TypedArray<Effect>, effect_instances)
 
+	Ref<Effect> get_effect_instance(Ref<Effect> effect, int index) const;
+
 	void start(AbilitySystem *owner);
 	Status tick(AbilitySystem *owner, float delta);
 
