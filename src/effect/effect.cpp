@@ -48,7 +48,7 @@ void Effect::finish(AbilitySystem *owner) {
 
 String Effect::_to_string() const {
 	if (String(ui_name).is_empty()) {
-		return String("{0}()").format(variant_array(get_class_static()));
+		return String("{0}()").format(variant_array(get_class()));
 	}
-	return String("{0}({1})").format(variant_array(get_class_static(), ui_name));
+	return String("{0}(\"{1}\")").format(variant_array(get_class(), ui_name));
 }

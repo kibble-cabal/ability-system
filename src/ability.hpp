@@ -85,7 +85,7 @@ public:
 	}
 	
 	String _to_string() const {
-		return fmt("Ability({0})", this->get_identifier());
+		return fmt("{0}(\"{1}\")", get_class(), this->get_identifier());
 	}
 };
 

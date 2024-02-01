@@ -144,5 +144,5 @@ Ref<Effect> AbilityEvent::get_effect_instance(Ref<Effect> effect, int index) con
 }
 
 String AbilityEvent::_to_string() const {
-	return String("AbilityEvent({0})").format(variant_array(ability->get_identifier()));
+	return fmt("{0}(\"{1}\")", get_class(), ability->get_identifier());
 }

@@ -52,7 +52,7 @@ public:
 	GETSET_RESOURCE(Color, ui_color)
 
 	String _to_string() const {
-		return String("Attribute({0})").format(variant_array(identifier));
+		return fmt("{0}(\"{1}\")", get_class(), identifier);
 	}
 };
 

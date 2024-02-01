@@ -243,7 +243,5 @@ String AbilitySystem::_to_string() const {
 	dict["abilities"] = abilities;
 	dict["attributes"] = get_attribute_dict();
 	dict["events"] = events;
-	Array arr;
-	arr.append(dict);
-	return String("AbilitySystem{0}").format(arr);
+	return fmt("{0}{1}", get_class(), dict);
 }

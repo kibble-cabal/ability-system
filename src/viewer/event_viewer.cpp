@@ -33,7 +33,7 @@ void EventViewer::add_effects(RenderContainer *container, Ref<AbilityEvent> even
         Ref<Effect> instance = event->get_effect_instance(effect, i);
         // If the instance does not exist, it's already been finished and removed.
         Status status = instance.is_valid() ? instance->get_last_status() : Status::FINISHED;
-        String text = effect->get_ui_name();
+        String text = fmt("{0}({1})", effect->get_class(), effect->get_ui_name());
         // For looped effects, add a counter.
         if (instance.is_valid() && instance->is_loop_effect())
             text += stringify(" (loop ", (int)(instance->get("elapsed_loops")) + 1, ")");
