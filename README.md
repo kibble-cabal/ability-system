@@ -14,6 +14,7 @@ This extension provides a framework for implementing game mechanics. It's inspir
     4. [`Attribute`](#attribute)
     5. [`Effect`](#effect)
     6. [`Tag`](#tag)
+    7. [Viewer classes](#viewer-classes)
 3. Tutorial (coming soon)
 
 ## Installation
@@ -24,8 +25,8 @@ This extension provides a framework for implementing game mechanics. It's inspir
 3. Open or restart Godot
 
 ### If you just want the build
-1. Copy the `bin` folder and the `ability_system.gdextension` file somewhere into your project
-2. Update `ability_system.gdextension` with the path to the `bin` folder in your project, if necessary
+1. Copy the `bin` folder, the `assets` folder (for the icons), and the `ability_system.gdextension` file somewhere into your project
+2. Update `ability_system.gdextension` with the path to the `bin` folder and the `assets` folder in your project, if necessary
 3. Open or restart Godot
 
 ## Class overview
@@ -78,6 +79,7 @@ This is where the bulk of your custom game logic will go. It has access to the `
 * `TagEffect` - adds or removes `Tag`s from `AbilitySystem`
 * `WaitEffect` - arbitrarily delays `AbilityEvent`
 * `TryActivateAbilityEffect` - attempts to activate an `Ability` on the `AbilitySystem`
+* `LoopEffect` - runs all the previous effects again
 
 ### `Tag`
 
@@ -91,6 +93,9 @@ Tags are names that classify and describe the state of an `AbilitySystem` node. 
 ### Viewer classes
 
 These classes are mainly used for debugging purposes. They are `Control` nodes that can be added to your scene. Each of them export an `AbilitySystem` property and will be reactive to changes on that `AbilitySystem`. They work both in-editor and in-game.
+
+#### `AbilitySystemViewer`
+A container for the other viewer nodes. Displays `Tag`s, `Attribute`s, `AbilityEvent`s, and `Ability`s when provided an `AbilitySystem`.
 
 #### `TagViewer`
 Displays `Tag`s when provided an `AbilitySystem`.
