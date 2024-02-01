@@ -39,9 +39,6 @@ void AbilityEvent::start(AbilitySystem *owner) {
 	for_each_i(this->ability->get_effects(), [this, owner](Ref<Effect> effect, int i) {
 		Ref<Effect> instance = effect->instantiate(i);
 		effect_instances.append(instance);
-		// Start the first effect (when in sequential mode) or all effects (when in parallel mode)
-		if (i == 0 || ability->effect_mode == EffectMode::PARALLEL)
-			start_effect(owner, instance);
 	});
 	emit_signal(as_signal::Started, owner);
 	status = Status::RUNNING;
@@ -92,8 +89,11 @@ void AbilityEvent::tick_parallel(AbilitySystem *owner, float delta) {
 
 	// Tick every effect.
 	for_each_i(effect_instances, [&](Ref<Effect> effect, int i) {
-		// Make a list of all finished effects.
 		if (effect->is_loop_effect()) return;
+		// Start not-yet-started effects.
+		if (effect->get_last_status() == Status::READY)
+			start_effect(owner, effect);
+		// Make a list of all finished effects.
 		if (effect->tick(owner, delta) == Status::FINISHED) {
 			finished_effects.push_back(i);
 			finish_effect(owner, effect);
@@ -110,17 +110,15 @@ void AbilityEvent::tick_sequential(AbilitySystem *owner, float delta) {
 	// Tick the first effect, if it exists.
 	if (effect_instances.size()) {
 		Ref<Effect> effect = effect_instances[0];
+		// Start not-yet-started effects.
+		if (effect->get_last_status() == Status::READY)
+			start_effect(owner, effect);
 		current_status = effect->tick(owner, delta);
 		// If the first effect is finished, remove it from the list.
 		if (current_status == Status::FINISHED) {
 			effect_instances.pop_front();
 			finish_effect(owner, effect);
 		}
-	}
-
-	if (effect_instances.size() && current_status != Status::RUNNING) {
-		Ref<Effect> current_effect = effect_instances[0];
-		start_effect(owner, current_effect);
 	}
 }
 
@@ -131,8 +129,6 @@ void AbilityEvent::do_loop(AbilitySystem *owner) {
 		Ref<Effect> effect = ability->get_effects()[i];
 		Ref<Effect> instance = effect->instantiate(i);
 		effect_instances.push_front(instance);
-		if (i == 0 || ability->effect_mode == EffectMode::PARALLEL)
-			start_effect(owner, instance);
 	}
 
 	emit_signal(as_signal::EffectsChanged);
