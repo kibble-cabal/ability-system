@@ -14,7 +14,7 @@ private:
 	StringName identifier;
 
 	/* UI properties */
-	Color ui_color;
+	Color ui_color = Color(1.0, 1.0, 1.0);
 
 protected:
 	static void _bind_methods() {
