@@ -1,4 +1,5 @@
 #include "editor.h"
+
 #include <godot_cpp/variant/utility_functions.hpp>
 
 AttributeInspectorEditor::AttributeInspectorEditor() {
@@ -20,18 +21,26 @@ AttributeInspectorEditor::AttributeInspectorEditor() {
 void AttributeInspectorEditor::_ready() {
     h_box->add_child(picker);
     h_box->add_child(add_button);
-    add_button->connect("pressed", callable_mp(this, &AttributeInspectorEditor::_on_add_pressed));
+    add_button->connect(
+        "pressed",
+        callable_mp(this, &AttributeInspectorEditor::_on_add_pressed)
+    );
 }
 
 void AttributeInspectorEditor::_bind_methods() {
-    ClassDB::bind_method(D_METHOD("_on_add_pressed"), &AttributeInspectorEditor::_on_add_pressed);
+    ClassDB::bind_method(
+        D_METHOD("_on_add_pressed"),
+        &AttributeInspectorEditor::_on_add_pressed
+    );
 }
 
-void AttributeInspectorEditor::render_attribute(Ref<Attribute> attribute, float value) {
-    if (row_nodes.has(attribute))
-        row_nodes.get(attribute)->set_value(value);
+void AttributeInspectorEditor::render_attribute(
+    Ref<Attribute> attribute, float value
+) {
+    if (row_nodes.has(attribute)) row_nodes.get(attribute)->set_value(value);
     else {
-        AttributeInspectorEditorRow *new_row = memnew(AttributeInspectorEditorRow);
+        AttributeInspectorEditorRow *new_row
+            = memnew(AttributeInspectorEditorRow);
         new_row->on_change = on_change;
         new_row->on_remove = on_remove;
         new_row->set_attribute(attribute);
@@ -45,8 +54,7 @@ void AttributeInspectorEditor::_on_add_pressed() {
     Ref<Resource> resource = picker->get_edited_resource();
     if (resource.is_valid()) {
         Ref<Attribute> attribute = (Ref<Attribute>)resource;
-        if (attribute != nullptr) 
-            on_add({ attribute });
+        if (attribute != nullptr) on_add({attribute});
         picker->set_edited_resource(nullptr);
     }
 }
@@ -65,6 +73,5 @@ void AttributeInspectorEditor::update(Dictionary new_value) {
             attributes_to_erase.push_back(pair.key);
         }
     }
-    for (auto attribute : attributes_to_erase)
-        row_nodes.erase(attribute);
+    for (auto attribute : attributes_to_erase) row_nodes.erase(attribute);
 }

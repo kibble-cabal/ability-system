@@ -1,11 +1,10 @@
 #include "editor.h"
 
+#include <godot_cpp/classes/label.hpp>
 #include <godot_cpp/classes/panel_container.hpp>
 #include <godot_cpp/classes/style_box_flat.hpp>
-#include <godot_cpp/classes/label.hpp>
 
 #include "../../tag.hpp"
-
 
 TagInspectorEditor::TagInspectorEditor() {
     add_theme_constant_override("separation", 0);
@@ -30,19 +29,27 @@ TagInspectorEditor::TagInspectorEditor() {
 void TagInspectorEditor::_ready() {
     h_box->add_child(picker);
     h_box->add_child(add_button);
-    add_button->connect("pressed", callable_mp(this, &TagInspectorEditor::_on_add_pressed));
+    add_button->connect(
+        "pressed",
+        callable_mp(this, &TagInspectorEditor::_on_add_pressed)
+    );
 }
 
 void TagInspectorEditor::_bind_methods() {
-    ClassDB::bind_method(D_METHOD("_on_add_pressed"), &TagInspectorEditor::_on_add_pressed);
-    ClassDB::bind_method(D_METHOD("_on_remove_pressed", "tag"), &TagInspectorEditor::_on_remove_pressed);
+    ClassDB::bind_method(
+        D_METHOD("_on_add_pressed"),
+        &TagInspectorEditor::_on_add_pressed
+    );
+    ClassDB::bind_method(
+        D_METHOD("_on_remove_pressed", "tag"),
+        &TagInspectorEditor::_on_remove_pressed
+    );
 }
 
 void TagInspectorEditor::render_tag(Ref<Tag> tag) {
     for (int i = 0; i < tag_container->get_child_count(); i++) {
         Node *child = tag_container->get_child(i);
-        if (child->get_meta("tag_identifier") == tag->get_identifier())
-            return;
+        if (child->get_meta("tag_identifier") == tag->get_identifier()) return;
     }
     // Create panel style box
     Ref<StyleBoxFlat> style_box = memnew(StyleBoxFlat);
@@ -73,8 +80,14 @@ void TagInspectorEditor::render_tag(Ref<Tag> tag) {
     Button *tag_remove_button = memnew(Button);
     tag_remove_button->set_text(String::utf8("✕"));
     tag_remove_button->set_flat(true);
-    tag_remove_button->add_theme_color_override("font_color", tag->get_ui_color());
-    tag_remove_button->connect("pressed", Callable(this, "_on_remove_pressed").bind(tag));
+    tag_remove_button->add_theme_color_override(
+        "font_color",
+        tag->get_ui_color()
+    );
+    tag_remove_button->connect(
+        "pressed",
+        Callable(this, "_on_remove_pressed").bind(tag)
+    );
     tag_h_box->add_child(tag_remove_button);
 }
 
@@ -82,8 +95,7 @@ void TagInspectorEditor::_on_add_pressed() {
     Ref<Resource> resource = picker->get_edited_resource();
     if (resource.is_valid()) {
         Ref<Tag> tag = (Ref<Tag>)resource;
-        if (tag != nullptr) 
-            on_add({ tag });
+        if (tag != nullptr) on_add({tag});
         picker->set_edited_resource(nullptr);
     }
 }
@@ -94,9 +106,7 @@ void TagInspectorEditor::_on_remove_pressed(Ref<Tag> tag) {
 
 void TagInspectorEditor::update(TypedArray<Tag> new_value) {
     // Render or re-render all tags.
-    for_each(new_value, [&](Ref<Tag> tag) {
-        render_tag(tag);
-    });
+    for_each(new_value, [&](Ref<Tag> tag) { render_tag(tag); });
 
     // Remove tags that are not in the new value.
     for (int i = 0; i < tag_container->get_child_count(); i++) {
@@ -110,7 +120,6 @@ void TagInspectorEditor::update(TypedArray<Tag> new_value) {
                 break;
             }
         }
-        if (!is_in_new_value)
-            child->queue_free();
+        if (!is_in_new_value) child->queue_free();
     }
 }

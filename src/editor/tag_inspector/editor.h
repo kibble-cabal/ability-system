@@ -1,12 +1,12 @@
 #ifndef AS_TAGINSPECTOREDITOR_H
 #define AS_TAGINSPECTOREDITOR_H
 
-#include <godot_cpp/classes/v_box_container.hpp>
+#include <godot_cpp/classes/button.hpp>
+#include <godot_cpp/classes/editor_resource_picker.hpp>
 #include <godot_cpp/classes/h_box_container.hpp>
 #include <godot_cpp/classes/h_flow_container.hpp>
-#include <godot_cpp/classes/button.hpp>
+#include <godot_cpp/classes/v_box_container.hpp>
 #include <godot_cpp/variant/typed_array.hpp>
-#include <godot_cpp/classes/editor_resource_picker.hpp>
 
 #include "functional"
 
@@ -14,7 +14,7 @@ using namespace godot;
 
 class Tag;
 
-class TagInspectorEditor : public VBoxContainer {
+class TagInspectorEditor: public VBoxContainer {
     GDCLASS(TagInspectorEditor, VBoxContainer);
 
 private:
@@ -24,8 +24,8 @@ private:
     HFlowContainer *tag_container = memnew(HFlowContainer);
 
 public:
-    std::function<void (Ref<Tag>)> on_add = nullptr;
-    std::function<void (Ref<Tag>)> on_remove = nullptr;
+    std::function<void(Ref<Tag>)> on_add = nullptr;
+    std::function<void(Ref<Tag>)> on_remove = nullptr;
 
 private:
     void render_tag(Ref<Tag> tag);

@@ -10,36 +10,35 @@ using namespace godot;
 
 class AbilitySystem;
 
-class AbilityEvent : public Resource
-{
-	GDCLASS(AbilityEvent, Resource);
+class AbilityEvent: public Resource {
+    GDCLASS(AbilityEvent, Resource);
 
 private:
-	Ref<Ability> ability;
-	TypedArray<Effect> effect_instances;
-	Status status;
+    Ref<Ability> ability;
+    TypedArray<Effect> effect_instances;
+    Status status;
 
 protected:
-	static void _bind_methods();
+    static void _bind_methods();
 
-	void start_effect(AbilitySystem *owner, Ref<Effect> effect_instance);
-	void finish_effect(AbilitySystem *owner, Ref<Effect> effect_instance);
+    void start_effect(AbilitySystem *owner, Ref<Effect> effect_instance);
+    void finish_effect(AbilitySystem *owner, Ref<Effect> effect_instance);
 
-	void tick_parallel(AbilitySystem *owner, float delta);
-	void tick_sequential(AbilitySystem *owner, float delta);
+    void tick_parallel(AbilitySystem *owner, float delta);
+    void tick_sequential(AbilitySystem *owner, float delta);
 
-	void do_loop(AbilitySystem *owner);
+    void do_loop(AbilitySystem *owner);
 
 public:
-	GETSET_RESOURCE(Ref<Ability>, ability)
-	GETSET_RESOURCE(TypedArray<Effect>, effect_instances)
+    GETSET_RESOURCE(Ref<Ability>, ability)
+    GETSET_RESOURCE(TypedArray<Effect>, effect_instances)
 
-	Ref<Effect> get_effect_instance(Ref<Effect> effect, int index) const;
+    Ref<Effect> get_effect_instance(Ref<Effect> effect, int index) const;
 
-	void start(AbilitySystem *owner);
-	Status tick(AbilitySystem *owner, float delta);
+    void start(AbilitySystem *owner);
+    Status tick(AbilitySystem *owner, float delta);
 
-	String _to_string() const;
+    String _to_string() const;
 };
 
 #endif

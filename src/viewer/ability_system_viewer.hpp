@@ -3,6 +3,7 @@
 
 #include <godot_cpp/classes/label.hpp>
 #include <godot_cpp/classes/v_box_container.hpp>
+
 #include "../ability_system.h"
 #include "ability_viewer.h"
 #include "attribute_viewer.h"
@@ -11,11 +12,11 @@
 
 using namespace godot;
 
-class AbilitySystemViewer : public VBoxContainer {
-	GDCLASS(AbilitySystemViewer, VBoxContainer);
+class AbilitySystemViewer: public VBoxContainer {
+    GDCLASS(AbilitySystemViewer, VBoxContainer);
 
 private:
-	NodePath ability_system_path;
+    NodePath ability_system_path;
 
     Label *ability_label = memnew(Label);
     Label *attribute_label = memnew(Label);
@@ -53,7 +54,7 @@ public:
         add_child(event_viewer);
     }
 
-	void _notification(int what) {
+    void _notification(int what) {
         switch (what) {
             case NOTIFICATION_READY:
                 update_children_ability_system_paths();
@@ -71,15 +72,24 @@ public:
     void update_children_ability_system_paths() {
         AbilitySystem *ability_system = get_ability_system();
         if (ability_system) {
-            ability_viewer->set_ability_system_path(ability_viewer->get_path_to(ability_system));
-            tag_viewer->set_ability_system_path(tag_viewer->get_path_to(ability_system));
-            attribute_viewer->set_ability_system_path(attribute_viewer->get_path_to(ability_system));
-            event_viewer->set_ability_system_path(event_viewer->get_path_to(ability_system));
+            ability_viewer->set_ability_system_path(
+                ability_viewer->get_path_to(ability_system)
+            );
+            tag_viewer->set_ability_system_path(
+                tag_viewer->get_path_to(ability_system)
+            );
+            attribute_viewer->set_ability_system_path(
+                attribute_viewer->get_path_to(ability_system)
+            );
+            event_viewer->set_ability_system_path(
+                event_viewer->get_path_to(ability_system)
+            );
         }
     }
 
     AbilitySystem *get_ability_system() const {
-        if (is_inside_tree() && is_node_ready() && has_node(ability_system_path))
+        if (is_inside_tree() && is_node_ready()
+            && has_node(ability_system_path))
             return get_node<AbilitySystem>(ability_system_path);
         return nullptr;
     }

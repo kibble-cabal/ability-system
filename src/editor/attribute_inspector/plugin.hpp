@@ -4,8 +4,8 @@
 #include <godot_cpp/classes/editor_inspector_plugin.hpp>
 #include <godot_cpp/classes/editor_plugin.hpp>
 
-#include "property.h"
 #include "../../ability_system.h"
+#include "property.h"
 
 using namespace godot;
 
@@ -21,16 +21,17 @@ public:
     }
 
     bool _parse_property(
-        Object *object, 
-        Variant::Type type, 
-        const String &name, 
-        PropertyHint hint_type, 
-        const String &hint_string, 
-        BitField<PropertyUsageFlags> usage_flags, 
+        Object *object,
+        Variant::Type type,
+        const String &name,
+        PropertyHint hint_type,
+        const String &hint_string,
+        BitField<PropertyUsageFlags> usage_flags,
         bool wide
     ) override {
         if (type == Variant::Type::DICTIONARY && name == "attributes") {
-            AttributeInspectorProperty *property = memnew(AttributeInspectorProperty);
+            AttributeInspectorProperty *property
+                = memnew(AttributeInspectorProperty);
             add_property_editor(name, property);
             return true;
         }

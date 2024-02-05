@@ -7,7 +7,7 @@
 
 using namespace godot;
 
-class AttributeInspectorProperty : public EditorProperty {
+class AttributeInspectorProperty: public EditorProperty {
     GDCLASS(AttributeInspectorProperty, EditorProperty);
 
 private:

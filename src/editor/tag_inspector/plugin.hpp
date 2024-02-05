@@ -5,10 +5,10 @@
 #include <godot_cpp/classes/editor_plugin.hpp>
 using namespace godot;
 
-#include "property.h"
-#include "../../ability_system.h"
 #include "../../ability.hpp"
+#include "../../ability_system.h"
 #include "../../effect/tag_effect.h"
+#include "property.h"
 
 class TagInspectorPropertyPlugin: public EditorInspectorPlugin {
     GDCLASS(TagInspectorPropertyPlugin, EditorInspectorPlugin);
@@ -26,15 +26,17 @@ public:
     }
 
     bool _parse_property(
-        Object *object, 
-        Variant::Type type, 
-        const String &name, 
-        PropertyHint hint_type, 
-        const String &hint_string, 
-        BitField<PropertyUsageFlags> usage_flags, 
+        Object *object,
+        Variant::Type type,
+        const String &name,
+        PropertyHint hint_type,
+        const String &hint_string,
+        BitField<PropertyUsageFlags> usage_flags,
         bool wide
     ) override {
-        if (type == Variant::Type::ARRAY && (name == "tags" || name == "tags_blocking" || name == "tags_required")) {
+        if (type == Variant::Type::ARRAY
+            && (name == "tags" || name == "tags_blocking"
+                || name == "tags_required")) {
             TagInspectorProperty *property = memnew(TagInspectorProperty);
             add_property_editor(name, property);
             return true;
