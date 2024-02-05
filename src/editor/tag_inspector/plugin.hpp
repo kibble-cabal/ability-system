@@ -8,6 +8,7 @@ using namespace godot;
 #include "../../ability.hpp"
 #include "../../ability_system.h"
 #include "../../effect/tag_effect.h"
+#include "../../project_settings.h"
 #include "property.h"
 
 class TagInspectorPropertyPlugin: public EditorInspectorPlugin {
@@ -18,11 +19,13 @@ protected:
 
 public:
     bool _can_handle(Object *object) const override {
-        return (
-            Object::cast_to<AbilitySystem>(object) != nullptr
-            || Object::cast_to<Ability>(object) != nullptr
-            || Object::cast_to<TagEffect>(object) != nullptr
-        );
+        return ASProjectSettings::get_tags_editor_enabled()
+               && !any(
+                   (Array)ASProjectSettings::get_tags_editor_exclude_classes(),
+                   [&](String excluded_class) {
+                       return ClassDB::is_parent_class(object->get_class(), excluded_class);
+                   }
+               );
     }
 
     bool _parse_property(
@@ -34,9 +37,9 @@ public:
         BitField<PropertyUsageFlags> usage_flags,
         bool wide
     ) override {
-        if (type == Variant::Type::ARRAY
-            && (name == "tags" || name == "tags_blocking"
-                || name == "tags_required")) {
+        if (!ASProjectSettings::get_tags_editor_enabled()) return false;
+        bool is_prop_name = ASProjectSettings::get_tags_editor_property_names().has(name);
+        if (type == Variant::Type::ARRAY && is_prop_name) {
             TagInspectorProperty *property = memnew(TagInspectorProperty);
             add_property_editor(name, property);
             return true;

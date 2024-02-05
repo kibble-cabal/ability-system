@@ -5,6 +5,7 @@
 #include <godot_cpp/classes/editor_plugin.hpp>
 
 #include "../../ability_system.h"
+#include "../../project_settings.h"
 #include "property.h"
 
 using namespace godot;
@@ -17,7 +18,13 @@ protected:
 
 public:
     bool _can_handle(Object *object) const override {
-        return Object::cast_to<AbilitySystem>(object) != nullptr;
+        return ASProjectSettings::get_attributes_editor_enabled()
+               && !any(
+                   (Array)ASProjectSettings::get_attributes_editor_exclude_classes(),
+                   [&](String excluded_class) {
+                       return ClassDB::is_parent_class(object->get_class(), excluded_class);
+                   }
+               );
     }
 
     bool _parse_property(
@@ -29,9 +36,10 @@ public:
         BitField<PropertyUsageFlags> usage_flags,
         bool wide
     ) override {
-        if (type == Variant::Type::DICTIONARY && name == "attributes") {
-            AttributeInspectorProperty *property
-                = memnew(AttributeInspectorProperty);
+        if (!ASProjectSettings::get_attributes_editor_enabled()) return false;
+        bool is_prop_name = ASProjectSettings::get_attributes_editor_property_names().has(name);
+        if (type == Variant::Type::DICTIONARY && is_prop_name) {
+            AttributeInspectorProperty *property = memnew(AttributeInspectorProperty);
             add_property_editor(name, property);
             return true;
         }

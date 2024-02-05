@@ -5,7 +5,7 @@
 using namespace godot;
 
 template <typename Ty, typename Fn>
-static bool any(TypedArray<Ty> array, Fn fn) {
+static bool any(Ty array, Fn fn) {
     for (int i = 0; i < array.size(); i++) {
         if (fn(array[i])) return true;
     }
@@ -50,6 +50,13 @@ static void do_for(Fn fn, First first, Rest... rest) {
 template <class Fn>
 static void do_for(Fn fn) {
     /* Parameter pack is empty. */
+}
+
+template <class... Args>
+static PackedStringArray string_array(Args... args) {
+    PackedStringArray arr;
+    do_for([&](auto arg) { arr.append((String)arg); }, args...);
+    return arr;
 }
 
 template <class... Args>

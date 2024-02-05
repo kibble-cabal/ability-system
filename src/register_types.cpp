@@ -18,6 +18,7 @@
 #include "effect/tag_effect.h"
 #include "effect/try_activate_ability_effect.h"
 #include "effect/wait_effect.hpp"
+#include "project_settings.h"
 
 // Viewer
 #include "viewer/ability_system_viewer.hpp"
@@ -40,6 +41,8 @@
 
 void initialize_ability_system_module(ModuleInitializationLevel p_level) {
     if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE) {
+        ASProjectSettings::register_settings();
+
         ClassDB::register_class<Ability>();
         ClassDB::register_class<AbilityEvent>();
         ClassDB::register_class<Attribute>();
@@ -97,9 +100,7 @@ extern "C" {
 
         init_obj.register_initializer(initialize_ability_system_module);
         init_obj.register_terminator(uninitialize_ability_system_module);
-        init_obj.set_minimum_library_initialization_level(
-            MODULE_INITIALIZATION_LEVEL_EDITOR
-        );
+        init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_EDITOR);
 
         return init_obj.init();
     }
