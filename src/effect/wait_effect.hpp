@@ -12,7 +12,7 @@ class WaitEffect: public Effect {
 private:
     float min_wait_time = 0.0;
     float max_wait_time = 1.0;
-    float wait_time;
+    float wait_time = 0.0;
 
 protected:
     static void _bind_methods() {

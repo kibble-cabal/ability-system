@@ -22,13 +22,13 @@ private:
     float elapsed_time = 0.0;
 
     /* UI properties */
-    StringName ui_name;
+    StringName ui_name = "";
     Color ui_color = Color(1.0, 1.0, 1.0);
 
     /* Internal properties */
     Status last_status = Status::READY;
     Ref<Effect> instantiated_from;
-    int index;
+    int index = -1;
 
 protected:
     static void _bind_methods();

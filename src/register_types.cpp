@@ -39,6 +39,9 @@
 #include "editor/tag_inspector/plugin.hpp"
 #include "editor/tag_inspector/property.h"
 
+// Editor: CSharp binding generator
+#include "editor/csharp/editor_menu_extension.h"
+
 void initialize_ability_system_module(ModuleInitializationLevel p_level) {
     if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE) {
         ASProjectSettings::register_settings();
@@ -80,6 +83,10 @@ void initialize_ability_system_module(ModuleInitializationLevel p_level) {
         ClassDB::register_class<TagInspectorPropertyPlugin>();
         ClassDB::register_class<TagInspectorPlugin>();
         EditorPlugins::add_by_type<TagInspectorPlugin>();
+
+        // Editor: CSharp binding generator
+        ClassDB::register_class<AbilitySystemMenuExtensionPlugin>();
+        EditorPlugins::add_by_type<AbilitySystemMenuExtensionPlugin>();
     }
 }
 

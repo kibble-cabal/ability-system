@@ -25,7 +25,7 @@ class Ability: public Resource {
     friend class AbilityEvent;
 
 private:
-    StringName identifier;
+    StringName identifier = "";
 
     /* Tags */
     TypedArray<Tag> tags_blocking;
@@ -33,7 +33,7 @@ private:
 
     /* Effects */
     TypedArray<Effect> effects;
-    EffectMode effect_mode;
+    EffectMode effect_mode = EffectMode::PARALLEL;
 
     /* UI properties */
     Color ui_color = Color(1.0, 1.0, 1.0);
@@ -51,13 +51,13 @@ protected:
         /* Bind constants */
         ClassDB::bind_integer_constant(
             get_class_static(),
-            "EffectMode",
+            "Mode",
             "PARALLEL",
             EffectMode::PARALLEL
         );
         ClassDB::bind_integer_constant(
             get_class_static(),
-            "EffectMode",
+            "Mode",
             "SEQUENTIAL",
             EffectMode::SEQUENTIAL
         );
@@ -73,12 +73,7 @@ protected:
         ARRAY_PROP(effects, RESOURCE_TYPE_HINT("Effect"));
         ClassDB::add_property(
             get_class_static(),
-            PropertyInfo(
-                Variant::INT,
-                "effect_mode",
-                PROPERTY_HINT_ENUM,
-                EffectModePropertyHint
-            ),
+            PropertyInfo(Variant::INT, "effect_mode", PROPERTY_HINT_ENUM, EffectModePropertyHint),
             "set_effect_mode",
             "get_effect_mode"
         );

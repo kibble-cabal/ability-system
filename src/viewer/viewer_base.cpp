@@ -14,22 +14,10 @@ void AbilitySystemViewerBase::_bind_methods() {
         D_METHOD("_attributes_changed"),
         &AbilitySystemViewerBase::_attributes_changed
     );
-    ClassDB::bind_method(
-        D_METHOD("_tags_changed"),
-        &AbilitySystemViewerBase::_tags_changed
-    );
-    ClassDB::bind_method(
-        D_METHOD("_events_changed"),
-        &AbilitySystemViewerBase::_events_changed
-    );
-    ClassDB::bind_method(
-        D_METHOD("_effects_changed"),
-        &AbilitySystemViewerBase::_effects_changed
-    );
-    ClassDB::bind_method(
-        D_METHOD("_event_blocked"),
-        &AbilitySystemViewerBase::_event_blocked
-    );
+    ClassDB::bind_method(D_METHOD("_tags_changed"), &AbilitySystemViewerBase::_tags_changed);
+    ClassDB::bind_method(D_METHOD("_events_changed"), &AbilitySystemViewerBase::_events_changed);
+    ClassDB::bind_method(D_METHOD("_effects_changed"), &AbilitySystemViewerBase::_effects_changed);
+    ClassDB::bind_method(D_METHOD("_event_blocked"), &AbilitySystemViewerBase::_event_blocked);
 }
 
 void AbilitySystemViewerBase::connect_all() {
@@ -82,44 +70,25 @@ void AbilitySystemViewerBase::connect_to_tags() {
 
 void AbilitySystemViewerBase::connect_to_attributes() {
     if (get_ability_system() != nullptr) {
-        TypedArray<Attribute> keys
-            = get_ability_system()->get_attribute_dict().keys();
+        TypedArray<Attribute> keys = get_ability_system()->get_attributes().keys();
         for_each(keys, [&](Ref<Attribute> attribute) {
-            try_connect(
-                attribute.ptr(),
-                "changed",
-                Callable(this, "queue_redraw")
-            );
+            try_connect(attribute.ptr(), "changed", Callable(this, "queue_redraw"));
         });
     }
 }
 
 void AbilitySystemViewerBase::connect_to_abilities() {
     if (get_ability_system() != nullptr)
-        for_each(
-            get_ability_system()->get_abilities(),
-            [&](Ref<Ability> ability) {
-                try_connect(
-                    ability.ptr(),
-                    "changed",
-                    Callable(this, "queue_redraw")
-                );
-            }
-        );
+        for_each(get_ability_system()->get_abilities(), [&](Ref<Ability> ability) {
+            try_connect(ability.ptr(), "changed", Callable(this, "queue_redraw"));
+        });
 }
 
 void AbilitySystemViewerBase::connect_to_events() {
     if (get_ability_system() != nullptr)
-        for_each(
-            get_ability_system()->get_events(),
-            [&](Ref<AbilityEvent> event) {
-                try_connect(
-                    event.ptr(),
-                    "changed",
-                    Callable(this, "queue_redraw")
-                );
-            }
-        );
+        for_each(get_ability_system()->get_events(), [&](Ref<AbilityEvent> event) {
+            try_connect(event.ptr(), "changed", Callable(this, "queue_redraw"));
+        });
 }
 
 void AbilitySystemViewerBase::set_ability_system_path(NodePath value) {

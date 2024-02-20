@@ -48,8 +48,7 @@ public:
     }
 
     void update_process_mode() {
-        if (!is_node_ready() || Engine::get_singleton()->is_editor_hint())
-            return;
+        if (!is_node_ready() || Engine::get_singleton()->is_editor_hint()) return;
         set_process_internal(false);
         set_physics_process_internal(false);
         if (events.size()) {
@@ -72,11 +71,11 @@ public:
 
     /* Attribute methods */
 
-    Dictionary get_attribute_dict() const {
+    Dictionary get_attributes() const {
         return attribute_map.get_attribute_dict();
     }
 
-    void set_attribute_dict(Dictionary value) {
+    void set_attributes(Dictionary value) {
         attribute_map.set_attribute_dict(value);
         emit_signal(as_signal::AttributesChanged);
     }

@@ -3,7 +3,6 @@
 #include "utils.hpp"
 
 namespace attributes_editor {
-    /// @brief If true,
     static const auto ENABLED = "ability_system/attributes/editor_enabled";
 
     /// Defines a list of class names which will NOT use the attribute editor
@@ -23,6 +22,11 @@ namespace tags_editor {
     static const auto PROPERTY_NAMES = "ability_system/tags/editor_property_names";
 }  // namespace tags_editor
 
+namespace csharp {
+    static const auto GENERATION_DIRECTORY = "ability_system/csharp/generation_directory";
+    static const auto GENERATION_FILE_NAME = "ability_system/csharp/generation_file_name";
+}  // namespace csharp
+
 void ASProjectSettings::register_settings() {
     register_setting(attributes_editor::ENABLED, true);
     register_setting(attributes_editor::EXCLUDE_CLASSES, PackedStringArray());
@@ -33,6 +37,8 @@ void ASProjectSettings::register_settings() {
         tags_editor::PROPERTY_NAMES,
         string_array("tags", "tags_blocking", "tags_required")
     );
+    register_setting(csharp::GENERATION_DIRECTORY, "res://addons/ability_system/gen");
+    register_setting(csharp::GENERATION_FILE_NAME, "AbilitySystemGeneratedAPI.cs");
 }
 
 bool ASProjectSettings::get_attributes_editor_enabled() {
@@ -57,4 +63,16 @@ PackedStringArray ASProjectSettings::get_tags_editor_exclude_classes() {
 
 PackedStringArray ASProjectSettings::get_tags_editor_property_names() {
     return get_setting<PackedStringArray>(tags_editor::PROPERTY_NAMES);
+}
+
+String ASProjectSettings::get_csharp_generation_directory() {
+    return get_setting<String>(csharp::GENERATION_DIRECTORY);
+}
+
+String ASProjectSettings::get_csharp_generation_file_name() {
+    return get_setting<String>(csharp::GENERATION_FILE_NAME);
+}
+
+String ASProjectSettings::get_csharp_generation_path() {
+    return get_csharp_generation_directory().path_join(get_csharp_generation_file_name());
 }

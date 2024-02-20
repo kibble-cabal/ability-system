@@ -11,7 +11,7 @@ void AbilitySystem::_bind_methods() {
     BIND_GETSET(AbilitySystem, tags);
     BIND_GETSET(AbilitySystem, abilities);
     BIND_GETSET(AbilitySystem, events);
-    BIND_GETSET(AbilitySystem, attribute_dict);
+    BIND_GETSET(AbilitySystem, attributes);
     BIND_GETSET(AbilitySystem, update_mode);
 
     /* Bind constants */
@@ -34,14 +34,8 @@ void AbilitySystem::_bind_methods() {
         UpdateMode::PROCESS
     );
 
-    ClassDB::bind_method(
-        D_METHOD("has_attribute", "attribute"),
-        &AbilitySystem::has_attribute
-    );
-    ClassDB::bind_method(
-        D_METHOD("grant_attribute", "attribute"),
-        &AbilitySystem::grant_attribute
-    );
+    ClassDB::bind_method(D_METHOD("has_attribute", "attribute"), &AbilitySystem::has_attribute);
+    ClassDB::bind_method(D_METHOD("grant_attribute", "attribute"), &AbilitySystem::grant_attribute);
     ClassDB::bind_method(
         D_METHOD("revoke_attribute", "attribute"),
         &AbilitySystem::revoke_attribute
@@ -58,43 +52,16 @@ void AbilitySystem::_bind_methods() {
         D_METHOD("modify_attribute_value", "attribute", "by_amount"),
         &AbilitySystem::modify_attribute_value
     );
-    ClassDB::bind_method(
-        D_METHOD("can_activate", "ability"),
-        &AbilitySystem::can_activate
-    );
-    ClassDB::bind_method(
-        D_METHOD("has_ability", "ability"),
-        &AbilitySystem::has_ability
-    );
-    ClassDB::bind_method(
-        D_METHOD("grant_ability", "ability"),
-        &AbilitySystem::grant_ability
-    );
-    ClassDB::bind_method(
-        D_METHOD("revoke_ability", "ability"),
-        &AbilitySystem::revoke_ability
-    );
-    ClassDB::bind_method(
-        D_METHOD("activate", "ability"),
-        &AbilitySystem::activate
-    );
+    ClassDB::bind_method(D_METHOD("can_activate", "ability"), &AbilitySystem::can_activate);
+    ClassDB::bind_method(D_METHOD("has_ability", "ability"), &AbilitySystem::has_ability);
+    ClassDB::bind_method(D_METHOD("grant_ability", "ability"), &AbilitySystem::grant_ability);
+    ClassDB::bind_method(D_METHOD("revoke_ability", "ability"), &AbilitySystem::revoke_ability);
+    ClassDB::bind_method(D_METHOD("activate", "ability"), &AbilitySystem::activate);
     ClassDB::bind_method(D_METHOD("has_tag", "tag"), &AbilitySystem::has_tag);
-    ClassDB::bind_method(
-        D_METHOD("has_some_tags", "tags"),
-        &AbilitySystem::has_some_tags
-    );
-    ClassDB::bind_method(
-        D_METHOD("has_all_tags", "tags"),
-        &AbilitySystem::has_all_tags
-    );
-    ClassDB::bind_method(
-        D_METHOD("grant_tag", "tag"),
-        &AbilitySystem::grant_tag
-    );
-    ClassDB::bind_method(
-        D_METHOD("revoke_tag", "tag"),
-        &AbilitySystem::revoke_tag
-    );
+    ClassDB::bind_method(D_METHOD("has_some_tags", "tags"), &AbilitySystem::has_some_tags);
+    ClassDB::bind_method(D_METHOD("has_all_tags", "tags"), &AbilitySystem::has_all_tags);
+    ClassDB::bind_method(D_METHOD("grant_tag", "tag"), &AbilitySystem::grant_tag);
+    ClassDB::bind_method(D_METHOD("revoke_tag", "tag"), &AbilitySystem::revoke_tag);
 
     /* Bind properties */
     ARRAY_PROP(tags, RESOURCE_TYPE_HINT("Tag"));
@@ -102,57 +69,32 @@ void AbilitySystem::_bind_methods() {
     ARRAY_PROP(events, RESOURCE_TYPE_HINT("AbilityEvent"));
     ADD_PROPERTY(
         PropertyInfo(Variant::DICTIONARY, "attributes"),
-        "set_attribute_dict",
-        "get_attribute_dict"
+        "set_attributes",
+        "get_attributes"
     );
     ClassDB::add_property(
         get_class_static(),
-        PropertyInfo(
-            Variant::INT,
-            "update_mode",
-            PROPERTY_HINT_ENUM,
-            UpdateModePropertyHint
-        ),
+        PropertyInfo(Variant::INT, "update_mode", PROPERTY_HINT_ENUM, UpdateModePropertyHint),
         "set_update_mode",
         "get_update_mode"
     );
 
     /* Bind signals */
-    ADD_SIGNAL(
-        MethodInfo(as_signal::EventBlocked, OBJECT_PROP_INFO(Ability, ability))
-    );
-    ADD_SIGNAL(MethodInfo(
-        as_signal::EventStarted,
-        OBJECT_PROP_INFO(AbilityEvent, event)
-    ));
-    ADD_SIGNAL(MethodInfo(
-        as_signal::EventFinished,
-        OBJECT_PROP_INFO(AbilityEvent, event)
-    ));
+    ADD_SIGNAL(MethodInfo(as_signal::EventBlocked, OBJECT_PROP_INFO(Ability, ability)));
+    ADD_SIGNAL(MethodInfo(as_signal::EventStarted, OBJECT_PROP_INFO(AbilityEvent, event)));
+    ADD_SIGNAL(MethodInfo(as_signal::EventFinished, OBJECT_PROP_INFO(AbilityEvent, event)));
     ADD_SIGNAL(MethodInfo(as_signal::EventsChanged));
     ADD_SIGNAL(MethodInfo(as_signal::EffectsChanged));
-    ADD_SIGNAL(MethodInfo(
-        as_signal::AttributeGranted,
-        OBJECT_PROP_INFO(Attribute, attribute)
-    ));
-    ADD_SIGNAL(MethodInfo(
-        as_signal::AttributeRevoked,
-        OBJECT_PROP_INFO(Attribute, attribute)
-    ));
+    ADD_SIGNAL(MethodInfo(as_signal::AttributeGranted, OBJECT_PROP_INFO(Attribute, attribute)));
+    ADD_SIGNAL(MethodInfo(as_signal::AttributeRevoked, OBJECT_PROP_INFO(Attribute, attribute)));
     ADD_SIGNAL(MethodInfo(
         as_signal::AttributeValueChanged,
         OBJECT_PROP_INFO(Attribute, attribute),
         PropertyInfo(Variant::FLOAT, "value")
     ));
     ADD_SIGNAL(MethodInfo(as_signal::AttributesChanged));
-    ADD_SIGNAL(MethodInfo(
-        as_signal::AbilityGranted,
-        OBJECT_PROP_INFO(Ability, ability)
-    ));
-    ADD_SIGNAL(MethodInfo(
-        as_signal::AbilityRevoked,
-        OBJECT_PROP_INFO(Ability, ability)
-    ));
+    ADD_SIGNAL(MethodInfo(as_signal::AbilityGranted, OBJECT_PROP_INFO(Ability, ability)));
+    ADD_SIGNAL(MethodInfo(as_signal::AbilityRevoked, OBJECT_PROP_INFO(Ability, ability)));
     ADD_SIGNAL(MethodInfo(as_signal::AbilitiesChanged));
     ADD_SIGNAL(MethodInfo(as_signal::TagGranted, OBJECT_PROP_INFO(Tag, tag)));
     ADD_SIGNAL(MethodInfo(as_signal::TagRevoked, OBJECT_PROP_INFO(Tag, tag)));
@@ -186,18 +128,15 @@ void AbilitySystem::update(float delta) {
     std::vector<int> finished_events;
 
     // Tick every event.
-    for_each_i(
-        events,
-        [this, delta, &finished_events](Ref<AbilityEvent> event, int i) {
-            // Make a list of finished events.
-            if (event->tick(this, delta) == Status::FINISHED) {
-                finished_events.push_back(i);
-                // Emit signals for finished events
-                emit_signal(as_signal::EventFinished, event);
-                emit_signal(as_signal::EventsChanged);
-            }
+    for_each_i(events, [this, delta, &finished_events](Ref<AbilityEvent> event, int i) {
+        // Make a list of finished events.
+        if (event->tick(this, delta) == Status::FINISHED) {
+            finished_events.push_back(i);
+            // Emit signals for finished events
+            emit_signal(as_signal::EventFinished, event);
+            emit_signal(as_signal::EventsChanged);
         }
-    );
+    });
 
     // Remove all finished events.
     for (int i : finished_events) events.remove_at(i);
@@ -247,9 +186,7 @@ void AbilitySystem::set_attribute_value(Ref<Attribute> attribute, float value) {
     }
 }
 
-void AbilitySystem::modify_attribute_value(
-    Ref<Attribute> attribute, float by_amount
-) {
+void AbilitySystem::modify_attribute_value(Ref<Attribute> attribute, float by_amount) {
     set_attribute_value(attribute, get_attribute_value(attribute) + by_amount);
 }
 
@@ -339,7 +276,7 @@ String AbilitySystem::_to_string() const {
     Dictionary dict;
     dict["tags"] = tags;
     dict["abilities"] = abilities;
-    dict["attributes"] = get_attribute_dict();
+    dict["attributes"] = get_attributes();
     dict["events"] = events;
     return fmt("{0}{1}", get_class(), dict);
 }

@@ -16,7 +16,7 @@ class AbilityEvent: public Resource {
 private:
     Ref<Ability> ability;
     TypedArray<Effect> effect_instances;
-    Status status;
+    Status status = Status::READY;
 
 protected:
     static void _bind_methods();

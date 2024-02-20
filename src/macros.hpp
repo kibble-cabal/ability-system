@@ -1,5 +1,9 @@
-#ifndef AS_MACROS_HPP
-#define AS_MACROS_HPP
+#pragma once
+
+#include <godot_cpp/classes/engine.hpp>
+#include <godot_cpp/variant/utility_functions.hpp>
+
+#include "utils.hpp"
 
 /***********************************
  *** _bind_methods helper macros ***
@@ -7,10 +11,7 @@
 
 #define BIND_GETSET(cls, prop_name)                                           \
     ClassDB::bind_method(D_METHOD("get_" #prop_name), &cls::get_##prop_name); \
-    ClassDB::bind_method(                                                     \
-        D_METHOD("set_" #prop_name, #prop_name),                              \
-        &cls::set_##prop_name                                                 \
-    );
+    ClassDB::bind_method(D_METHOD("set_" #prop_name, #prop_name), &cls::set_##prop_name);
 
 #define GROUP(name) ADD_GROUP(name, "");
 
@@ -22,60 +23,34 @@
         "get_" #prop_name                     \
     );
 
-#define OBJECT_PROP(obj_cls, prop_name)  \
-    ClassDB::add_property(               \
-        get_class_static(),              \
-        PropertyInfo(                    \
-            Variant::OBJECT,             \
-            #prop_name,                  \
-            PROPERTY_HINT_RESOURCE_TYPE, \
-            #obj_cls                     \
-        ),                               \
-        "set_" #prop_name,               \
-        "get_" #prop_name                \
+#define OBJECT_PROP(obj_cls, prop_name)                                                   \
+    ClassDB::add_property(                                                                \
+        get_class_static(),                                                               \
+        PropertyInfo(Variant::OBJECT, #prop_name, PROPERTY_HINT_RESOURCE_TYPE, #obj_cls), \
+        "set_" #prop_name,                                                                \
+        "get_" #prop_name                                                                 \
     );
 
-#define ARRAY_PROP(prop_name, type_hint) \
-    ADD_PROPERTY(                        \
-        PropertyInfo(                    \
-            Variant::ARRAY,              \
-            #prop_name,                  \
-            PROPERTY_HINT_ARRAY_TYPE,    \
-            type_hint                    \
-        ),                               \
-        "set_" #prop_name,               \
-        "get_" #prop_name                \
+#define ARRAY_PROP(prop_name, type_hint)                                               \
+    ADD_PROPERTY(                                                                      \
+        PropertyInfo(Variant::ARRAY, #prop_name, PROPERTY_HINT_ARRAY_TYPE, type_hint), \
+        "set_" #prop_name,                                                             \
+        "get_" #prop_name                                                              \
     );
 
-#define NO_EDITOR_PROP(variant_ty, prop_name) \
-    ClassDB::add_property(                    \
-        get_class_static(),                   \
-        PropertyInfo(                         \
-            variant_ty,                       \
-            #prop_name,                       \
-            PROPERTY_HINT_NONE,               \
-            "",                               \
-            PROPERTY_USAGE_NO_EDITOR          \
-        ),                                    \
-        "set_" #prop_name,                    \
-        "get_" #prop_name                     \
+#define NO_EDITOR_PROP(variant_ty, prop_name)                                                   \
+    ClassDB::add_property(                                                                      \
+        get_class_static(),                                                                     \
+        PropertyInfo(variant_ty, #prop_name, PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NO_EDITOR), \
+        "set_" #prop_name,                                                                      \
+        "get_" #prop_name                                                                       \
     );
 
 #define OBJECT_PROP_INFO(obj_cls, prop_name) \
-    PropertyInfo(                            \
-        Variant::OBJECT,                     \
-        #prop_name,                          \
-        PROPERTY_HINT_RESOURCE_TYPE,         \
-        #obj_cls                             \
-    )
+    PropertyInfo(Variant::OBJECT, #prop_name, PROPERTY_HINT_RESOURCE_TYPE, #obj_cls)
 
 #define RESOURCE_TYPE_HINT(cls_name_string) \
-    vformat(                                \
-        "%s/%s:%s",                         \
-        Variant::OBJECT,                    \
-        PROPERTY_HINT_RESOURCE_TYPE,        \
-        cls_name_string                     \
-    )
+    vformat("%s/%s:%s", Variant::OBJECT, PROPERTY_HINT_RESOURCE_TYPE, cls_name_string)
 
 /***********************************
  *** setter/getter helper macros ***
@@ -105,10 +80,12 @@
     GETTER(ty, prop_name)              \
     SETTER_RESOURCE(ty, prop_name)
 
+#define nameof(arg) #arg
 #define stringify(...) UtilityFunctions::str(__VA_ARGS__)
 #define print_error(arg) UtilityFunctions::printerr(arg)
+#define print UtilityFunctions::print
+#define print_warning(...) UtilityFunctions::print_rich("[color=yellow]", __VA_ARGS__, "[/color]")
+#define is_editor_hint() Engine::get_singleton()->is_editor_hint()
 #define RANDF_RANGE(min, max) UtilityFunctions::randf_range(min, max)
 
 #define fmt(string, args...) String(string).format(variant_array(args))
-
-#endif

@@ -11,7 +11,7 @@ class Tag: public Resource {
     GDCLASS(Tag, Resource);
 
 private:
-    StringName identifier;
+    StringName identifier = "";
 
     /* UI properties */
     Color ui_color = Color(1.0, 1.0, 1.0);

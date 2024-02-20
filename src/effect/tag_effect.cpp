@@ -3,15 +3,10 @@
 #include "../ability_system.h"
 
 void TagEffect::_bind_methods() {
+    ClassDB::bind_integer_constant(get_class_static(), "OperationType", "ADD", Operation::ADD);
     ClassDB::bind_integer_constant(
         get_class_static(),
-        "Operation",
-        "ADD",
-        Operation::ADD
-    );
-    ClassDB::bind_integer_constant(
-        get_class_static(),
-        "Operation",
+        "OperationType",
         "REMOVE",
         Operation::REMOVE
     );
@@ -22,12 +17,7 @@ void TagEffect::_bind_methods() {
     ARRAY_PROP(tags, RESOURCE_TYPE_HINT("Tag"));
     ClassDB::add_property(
         get_class_static(),
-        PropertyInfo(
-            Variant::INT,
-            "operation",
-            PROPERTY_HINT_ENUM,
-            "Add:1,Remove:-1"
-        ),
+        PropertyInfo(Variant::INT, "operation", PROPERTY_HINT_ENUM, "Add:1,Remove:-1"),
         "set_operation",
         "get_operation"
     );

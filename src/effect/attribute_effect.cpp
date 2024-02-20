@@ -25,8 +25,7 @@ int AttributeEffect::_tick(AbilitySystem *owner, float delta) {
     } else {
         print_error("Searching for attribute: " + stringify(attribute));
         print_error(
-            "Owner missing attribute! (attributes are "
-            + stringify(owner->get_attribute_dict()) + ")"
+            "Owner missing attribute! (attributes are " + stringify(owner->get_attributes()) + ")"
         );
     }
     return Status::FINISHED;

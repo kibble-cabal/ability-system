@@ -59,6 +59,9 @@ public:
     static bool get_tags_editor_enabled();
     static PackedStringArray get_tags_editor_exclude_classes();
     static PackedStringArray get_tags_editor_property_names();
+    static String get_csharp_generation_directory();
+    static String get_csharp_generation_file_name();
+    static String get_csharp_generation_path();
 };
 
 #endif

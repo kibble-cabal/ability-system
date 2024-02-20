@@ -10,6 +10,7 @@ sources = (
     + Glob("src/viewer/*.cpp")
     + Glob("src/editor/attribute_inspector/*.cpp")
     + Glob("src/editor/tag_inspector/*.cpp")
+    + Glob("src/editor/csharp/*.cpp")
 )
 
 if env["platform"] == "macos":

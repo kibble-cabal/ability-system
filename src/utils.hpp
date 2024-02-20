@@ -66,6 +66,28 @@ static Array variant_array(Args... args) {
     return arr;
 }
 
+template <typename T, typename Key, typename Value>
+static T dict_append_all(T appendable, Key key, Value val) {
+    appendable[key] = val;
+    return appendable;
+}
+
+template <typename T, typename Key, typename Value, typename... Args>
+static T dict_append_all(T appendable, Key key, Value val, Args... args) {
+    appendable[key] = val;
+    return dict_append_all(appendable, args...);
+}
+
+template <typename T>
+static T dict_append_all(T appendable) {
+    return appendable;
+}
+
+template <class... Args>
+static Dictionary dictionary(Args... args) {
+    return dict_append_all(Dictionary(), args...);
+}
+
 static void try_connect(Object *obj, String signal_name, Callable callable) {
     if (obj != nullptr && !obj->is_connected(signal_name, callable))
         obj->connect(signal_name, callable);

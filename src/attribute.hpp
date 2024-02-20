@@ -14,7 +14,7 @@ class Attribute: public Resource {
     friend class AttributeMap;
 
 private:
-    StringName identifier;
+    StringName identifier = "";
     float min_value = 0.0;
     float max_value = 1.0;
     float default_value = 0.0;
