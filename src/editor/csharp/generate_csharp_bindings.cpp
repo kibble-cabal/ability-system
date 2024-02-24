@@ -41,23 +41,6 @@ GenerateCSharpBindingsPlugin::IndentGuard::~IndentGuard() {
     }
 }
 
-bool GenerateCSharpBindingsPlugin::is_need_to_update() {
-    if (!ClassDB::class_exists("CSharpScript")) return false;
-
-    const String api_path = ASProjectSettings::get_csharp_generation_path();
-    if (FileAccess::file_exists(api_path)) {
-        auto file = FileAccess::open(api_path, FileAccess::READ);
-        ERR_FAIL_COND_V(FileAccess::get_open_error() != Error::OK, false);
-
-        String first_line = file->get_line();
-        if (first_line.begins_with("/// ")) {
-            String ver = first_line.substr(4);
-            return ver.strip_edges() != version;
-        }
-    }
-    return true;
-}
-
 void GenerateCSharpBindingsPlugin::generate() {
     String output_directory = ASProjectSettings::get_csharp_generation_directory();
     String api_file_name = ASProjectSettings::get_csharp_generation_file_name();
@@ -109,39 +92,44 @@ void GenerateCSharpBindingsPlugin::generate() {
         "TagViewer"
     ));
 
-    avoid_caching_for_classes = TypedArray<StringName>();
-
-    additional_statics_for_classes = extend_class_strings {};
-
-    override_disposable_for_classes = extend_class_strings {};
-
-    singletons = Engine::get_singleton()->get_singleton_list();
-
     generate_header();
 
     line("using Godot;");
-    line("using System;");
     line("using System.Linq;");
-    line("#nullable disable");
+    line("using System.Collections.Generic;");
+    line();
+    line("#nullable enable");
 
     force_log("Generation of bindings started, output file: " + out_path);
     force_log("Log file: " + out_log_path);
-    force_log(
-        "Hold Shift to print information on the Output panel when manually starting generation via "
-        "the 'Project - Tools - Ability System' menu"
-    );
 
-    is_shift_pressed = Input::get_singleton()->is_key_pressed(KEY_SHIFT);
+    line();
+    line("namespace AS");
+    {
+        TAB();
 
-    remap_data remapped_data;
-    for (int i = 0; i < generate_for_classes.size(); i++) {
-        generate_class(generate_for_classes[i], remapped_data);
+        generate_class_names();
+        line();
+
+        remap_data remapped_data;
+        for (int i = 0; i < generate_for_classes.size(); i++) {
+            generate_class(generate_for_classes[i], remapped_data);
+        }
     }
 
     line();
-    generate_class_utilities(remapped_data);
 
     force_log("The generation process is completed!");
+}
+
+void GenerateCSharpBindingsPlugin::generate_class_names() {
+    line("public static class ClassNames");
+    {
+        TAB();
+        for_each(generate_for_classes, [&](StringName cls) {
+            line(fmt("public static readonly StringName {0} = \"{0}\";", cls));
+        });
+    }
 }
 
 void GenerateCSharpBindingsPlugin::generate_header() {
@@ -159,6 +147,7 @@ void GenerateCSharpBindingsPlugin::generate_class(
 ) {
     log("Class: " + cls, 1);
 
+    StringName base_cls = get_native_base_class(cls);
     StringName parent_name = ClassDB::get_parent_class(cls);
     PackedStringArray enum_names = ClassDB::class_get_enum_list(cls, true);
     TypedArray<Dictionary> methods = ClassDB::class_get_method_list(cls, true);
@@ -167,27 +156,17 @@ void GenerateCSharpBindingsPlugin::generate_class(
     std::map<String, ArgumentData> properties_map;
 
     bool is_preserved_inheritance = generate_for_classes.has(parent_name);
-    bool is_singleton = singletons.has(cls);
 
     line();
-    // class AbilitySystemFPSGraph : AbilitySystemGraph
-    String static_mod_str = is_singleton ? "static " : "";
     String additional_inheritance = "";
-
-    if (override_disposable_for_classes.find(cls) != override_disposable_for_classes.end()) {
-        additional_inheritance += ", IDisposable";
-    }
 
     if (is_preserved_inheritance) {
         line(fmt("public partial class {0} : {1}{2}", cls, parent_name, additional_inheritance));
     } else {
         line(
-            fmt("{0}public partial class {1}{2}{3}",
-                static_mod_str,
+            fmt("public partial class {0}{1}{2}",
                 cls,
-                is_singleton
-                    ? ""
-                    : fmt(" : _AbilitySystemInstanceWrapper_<{0}>", get_native_base_class(cls)),
+                fmt(" : IInstanceWrapper<{0}>", base_cls),
                 additional_inheritance)
         );
     }
@@ -198,7 +177,7 @@ void GenerateCSharpBindingsPlugin::generate_class(
         // Wrapper
         {
             log("Wrapper...", 2);
-            generate_wrapper(cls, is_singleton, is_preserved_inheritance);
+            generate_wrapper(cls, is_preserved_inheritance);
         }
 
         // Consts
@@ -251,7 +230,8 @@ void GenerateCSharpBindingsPlugin::generate_class(
             }
 
             int added = 0;
-            line("public static new class MethodName");
+            if (is_preserved_inheritance) line("public static new class Method");
+            else line("public static class Method");
             {
                 TAB();
                 for (int i = 0; i < methods.size(); i++) {
@@ -268,29 +248,7 @@ void GenerateCSharpBindingsPlugin::generate_class(
             }
             line();
 
-            const auto &it_add = additional_statics_for_classes.find(cls);
-            if (it_add != additional_statics_for_classes.end()) {
-                line("// Additional custom statics");
-                for (const auto &i : it_add->second) {
-                    added++;
-                    line(i);
-                }
-            }
-
             if (added) line();
-
-            const auto &it_over = override_disposable_for_classes.find(cls);
-            if (it_over != override_disposable_for_classes.end()) {
-                line("// Custom Disposable");
-                line("public new void Dispose()");
-                {
-                    TAB();
-                    for (const auto &i : it_over->second) {
-                        line(i);
-                    }
-                }
-                line();
-            }
 
             for (int i = 0; i < methods.size(); i++) {
                 String name = ((Dictionary)methods[i])["name"];
@@ -299,256 +257,50 @@ void GenerateCSharpBindingsPlugin::generate_class(
                     continue;
                 }
 
-                if (!is_property.has(name))
-                    generate_method(cls, methods[i], is_singleton, remapped_data);
+                if (!is_property.has(name)) generate_method(cls, methods[i], remapped_data);
             }
         }
 
         // Properties
         {
             log("Properties...", 2);
-            generate_properties(cls, properties, properties_map, is_singleton);
+            generate_properties(cls, properties, properties_map);
         }
     }
 }
 
-void GenerateCSharpBindingsPlugin::generate_class_utilities(const remap_data &remapped_data) {
-    log("AbilitySystem utilities:", 1);
-
-    line("public interface _IAbilitySystemInstanceWrapper_ : IDisposable");
-    {
-        TAB();
-        line("void ClearNativePointer();");
+void GenerateCSharpBindingsPlugin::generate_wrapper(const StringName &cls, bool inheritance) {
+    StringName base_cls = get_native_base_class(cls);
+    bool is_node = ClassDB::is_parent_class(cls, "Node");
+    bool is_resource = ClassDB::is_parent_class(cls, "Resource");
+    if (!generate_for_classes.has(ClassDB::get_parent_class(cls))) {
+        if (is_node || is_resource) line("[Export]");
+        line(fmt("public {0} Instance { get; set; }", base_cls));
+        line();
+        line(
+            fmt("public {0}({1} instance) => (this as "
+                "IInstanceWrapper<{1}>).SetInstance(instance);",
+                cls,
+                base_cls)
+        );
+    } else {
+        line(fmt("public {0}({1} instance) : base (instance) {}", cls, base_cls));
     }
     line();
     line(
-        "public partial class _AbilitySystemInstanceWrapper_<T> : "
-        "_IAbilitySystemInstanceWrapper_ where T: GodotObject"
+        fmt("public static implicit operator {0}({1}? instance) => instance is null ? new() : "
+            "new(instance);",
+            cls,
+            base_cls)
     );
-    {
-        TAB();
-        line("public static class Enum { }");
-        line("public static class PropertyName { }");
-        line("public static class MethodName { }");
-        line("public static class SignalName { }");
-        line("public T Instance { get; protected set; }");
-        line();
-        line("public _AbilitySystemInstanceWrapper_(T _instance)");
-        {
-            TAB();
-            line("if (_instance == null) throw new ArgumentNullException(nameof(_instance));");
-            line(
-                "if (!ClassDB.IsParentClass(_instance.GetClass(), GetType().Name)) throw new "
-                "ArgumentException(\"\\\"_instance\\\" has the wrong type.\");"
-            );
-            line("Instance = _instance;");
-            if (is_generate_unload_event) {
-                line("_AbilitySystemUtils_.ExtensionUnloading += OnUnloading;");
-            }
-        }
-        if (is_generate_unload_event) {
-            line();
-            line("void OnUnloading()");
-            {
-                TAB();
-                line("if (Instance != null)");
-                {
-                    TAB();
-                    line("GD.Print($\"Unload {GetType()}, {Instance.NativeInstance}\");");
-                }
-                line("try");
-                {
-                    TAB();
-                    line("_AbilitySystemUtils_.ExtensionUnloading -= OnUnloading;");
-                }
-                line("catch {}");
-                line("Instance = null;");
-            }
-        }
-        line();
-        line("public void Dispose()");
-        {
-            TAB();
-            line("Instance?.Dispose();");
-            line("Instance = null;");
-        }
-        line();
-        line("public void ClearNativePointer() => Instance = null;");
-    }
+    line(fmt("public static implicit operator {1}({0} obj) => obj.Instance;", cls, base_cls));
     line();
-
-    line("internal static class _AbilitySystemUtils_");
-    {
-        TAB();
-
-        if (is_generate_unload_event) {
-            line("public static event Action ExtensionUnloading");
-            {
-                TAB();
-                line("add");
-                {
-                    TAB();
-                    line(
-                        "Engine.GetSingleton(\"AbilitySystemManager\").Connect(\"extension_"
-                        "unloading\","
-                        " Callable.From(value), (uint)GodotObject.ConnectFlags.OneShot);"
-                    );
-                }
-
-                line("remove");
-                {
-                    TAB();
-                    line(
-                        "Engine.GetSingleton(\"AbilitySystemManager\").Disconnect(\"extension_"
-                        "unloading\", Callable.From(value));"
-                    );
-                }
-            }
-            line();
-        }
-        line();
-
-        log("Arguments remap...", 2);
-        // Default data
-        generate_default_arguments_remap(remapped_data);
-
-        // Factory
-        log("Class factory...", 2);
-        {
-            line(
-                "static System.Collections.Generic.Dictionary<ulong, "
-                "_IAbilitySystemInstanceWrapper_> "
-                "cached_instances = new();"
-            );
-            line("static DateTime previous_clear_time = DateTime.Now;");
-            line();
-
-            line("public static object CreateWrapperFromObject(GodotObject _instance)");
-            {
-                TAB();
-                line("if (_instance == null)");
-                {
-                    TAB();
-                    line("return null;");
-                }
-
-                line("");
-                line("ulong id = _instance.GetInstanceId();");
-                line("if (cached_instances.ContainsKey(id))");
-                {
-                    TAB();
-                    line("return cached_instances[id];");
-                }
-                line("");
-                line("if ((DateTime.Now - previous_clear_time).TotalSeconds > 1)");
-                {
-                    TAB();
-                    line(
-                        "var query = cached_instances.Where((i) => "
-                        "GodotObject.IsInstanceIdValid(i.Key)).ToArray();"
-                    );
-                    line("foreach (var i in query)");
-                    {
-                        TAB();
-                        line("i.Value.ClearNativePointer();");
-                        line("cached_instances.Remove(i.Key);");
-                    }
-                    line("previous_clear_time = DateTime.Now;");
-                }
-                line("");
-
-                line("switch(_instance.GetClass())");
-                {
-                    TAB();
-                    for (int i = 0; i < generate_for_classes.size(); i++) {
-                        StringName cls = generate_for_classes[i];
-                        StringName base_cls = get_native_base_class(cls);
-                        if (!singletons.has(cls)) {
-                            line(fmt("case \"{0}\":", cls));
-                            {
-                                TAB();
-                                line(
-                                    fmt("_IAbilitySystemInstanceWrapper_ new_instance = new "
-                                        "{0}(({1})_instance);",
-                                        cls,
-                                        base_cls)
-                                );
-                                if (!avoid_caching_for_classes.has(cls)) {
-                                    line("cached_instances[id] = new_instance;");
-                                }
-                                line("return new_instance;");
-                            }
-                        }
-                    }
-                }
-                line("throw new NotImplementedException();");
-            }
-        }
-    }
-}
-
-void GenerateCSharpBindingsPlugin::generate_wrapper(
-    const StringName &cls, bool is_static, bool inheritance
-) {
-    if (is_static) {
-        String lowered_name = cls;
-
-        if (is_generate_unload_event) {
-            line("static bool _is_connected = false;");
-        }
-
-        line("private static GodotObject _instance;");
-        line("public static GodotObject Instance");
-
-        {
-            TAB();
-            line("get");
-            {
-                TAB();
-                if (is_generate_unload_event) {
-                    line("if (!_is_connected)");
-                    {
-                        TAB();
-                        line("_AbilitySystemUtils_.ExtensionUnloading += OnUnloading;");
-                        line("_is_connected = true;");
-                    }
-                    line();
-                }
-                {
-                    line("if (!GodotObject.IsInstanceValid(_instance))");
-                    {
-                        TAB();
-                        line(fmt("_instance = Engine.GetSingleton(\"{0}\");", cls));
-                    }
-                    line("return _instance;");
-                }
-            }
-        }
-
-        if (is_generate_unload_event) {
-            line();
-
-            line("static void OnUnloading()");
-            {
-                TAB();
-                line("try");
-                {
-                    TAB();
-                    line("_AbilitySystemUtils_.ExtensionUnloading -= OnUnloading;");
-                }
-                line("catch {}");
-                line("_instance = null;");
-                line("_is_connected = false;");
-            }
-            line("#endif", 0);
-            line();
-        }
-    } else {
-        StringName base_cls = get_native_base_class(cls);
-        line(fmt("public {0}({1} _instance) : base (_instance) {}", cls, base_cls));
-        line();
-        line(fmt("public {0}() : this(({1})ClassDB.Instantiate(\"{0}\")) { }", cls, base_cls));
-    }
+    line(fmt(
+        "public static implicit operator Variant({0}? obj) => obj is null ? new() : obj.Instance;",
+        cls
+    ));
+    line();
+    line(fmt("public {0}() : this(({1})ClassDB.Instantiate(ClassNames.{0})) { }", cls, base_cls));
     line();
 }
 
@@ -576,9 +328,9 @@ void GenerateCSharpBindingsPlugin::generate_constants(const StringName &cls) {
 
 void GenerateCSharpBindingsPlugin::generate_enum(const StringName &cls, const StringName &enm) {
     log(enm, 3);
-
     int added_items = 0;
-    line("public static new class Enum");
+    if (is_inherited(cls)) line("public static new class Enum");
+    else line("public static class Enum");
     {
         TAB();
 
@@ -628,7 +380,7 @@ void GenerateCSharpBindingsPlugin::generate_enum(const StringName &cls, const St
 }
 
 void GenerateCSharpBindingsPlugin::generate_method(
-    const StringName &cls, const Dictionary &method, bool is_static, remap_data &remapped_data
+    const StringName &cls, const Dictionary &method, remap_data &remapped_data
 ) {
     String name = (String)method["name"];
 
@@ -638,16 +390,13 @@ void GenerateCSharpBindingsPlugin::generate_method(
     ArgumentData return_data = argument_parse(return_dict, true);
     bool is_need_wrapper = generate_for_classes.has(return_data.type_name);
 
-    String static_mod_str = is_static ? "static " : "";
-
     std::vector<DefaultData> default_args
         = arguments_parse_values(method["args"], method["default_args"], remapped_data);
 
     String method_body = "";
 
     String method_signature = fmt(
-        "public {0}{1} {2}({3})",
-        static_mod_str,
+        "public {0} {1}({2})",
         return_data.type_name,
         pascal_case(method["name"]),
         arguments_string_decl(method["args"], true, default_args)
@@ -663,24 +412,33 @@ void GenerateCSharpBindingsPlugin::generate_method(
 
         if (is_need_wrapper) {
             method_body = fmt(
-                "({0})_AbilitySystemUtils_.CreateWrapperFromObject((GodotObject)"
+                "Utils.CreateWrapperFromObject<{0}>((GodotObject)"
                 "Instance?."
-                "Call(MethodName.{1}{2}));",
+                "Call(Method.{1}{2}));",
                 return_data.type_name,
                 pascal_case(name),
                 call_args
             );
         } else {
-            method_body = fmt(
-                "({0})({1}Instance?.Call(MethodName.{2}{3}));",
-                return_data.type_name,
-                int_convert,
-                pascal_case(name),
-                call_args
-            );
+            auto return_type_name = return_data.type_name.replace("?", "");
+            if (generate_for_classes.has(return_type_name))
+                method_body = fmt(
+                    "Instance?.Call(Method.{0}{1}).TryAs<{2}>();",
+                    pascal_case(name),
+                    call_args,
+                    get_native_base_class(return_type_name)
+                );
+            else
+                method_body = fmt(
+                    "{0}Instance?.Call(Method.{1}{2}).As<{3}>() ?? default;",
+                    int_convert,
+                    pascal_case(name),
+                    call_args,
+                    return_data.type_name
+                );
         }
     } else {
-        method_body = fmt("Instance?.Call(MethodName.{0}{1});", pascal_case(name), call_args);
+        method_body = fmt("Instance?.Call(Method.{0}{1});", pascal_case(name), call_args);
     }
 
     line(fmt("{0} => {1}", method_signature, method_body));
@@ -688,30 +446,10 @@ void GenerateCSharpBindingsPlugin::generate_method(
     line();
 }
 
-void GenerateCSharpBindingsPlugin::generate_default_arguments_remap(const remap_data &remapped_data
-) {
-    if (!remapped_data.size()) return;
-
-    line("public static class DefaultArgumentsData");
-    {
-        TAB();
-        for (const auto &it : remapped_data) {
-            line(
-                fmt("public static readonly {0} {1} = {2};",
-                    it.second.type_name,
-                    it.first,
-                    it.second.arg_string)
-            );
-        }
-    }
-    line();
-}
-
 void GenerateCSharpBindingsPlugin::generate_properties(
     const StringName &cls,
     const TypedArray<Dictionary> &props,
-    std::map<String, ArgumentData> setget_map,
-    bool is_static
+    std::map<String, ArgumentData> setget_map
 ) {
     // ClassDB SetGet is faster than calling set/get methods
     // Iterations: 100000
@@ -720,7 +458,8 @@ void GenerateCSharpBindingsPlugin::generate_properties(
     // ClassDB_SetGet Get: 28,660 ms
     // ClassDB_SetGet Set: 26,918 ms
 
-    line("public static new class PropertyName");
+    if (is_inherited(cls)) line("public static new class Property");
+    else line("public static class Property");
     {
         TAB();
         for (int i = 0; i < props.size(); i++) {
@@ -739,45 +478,83 @@ void GenerateCSharpBindingsPlugin::generate_properties(
 
         ArgumentData setget = setget_map[dict["name"]];
         bool is_need_wrapper = generate_for_classes.has(setget.type_name);
-        String static_mod_str = is_static ? "static " : "";
 
         log(setget.name, 3);
 
-        line(fmt("public {0}{1} {2}", static_mod_str, setget.type_name, pascal_case(setget.name)));
+        String type_name = is_need_wrapper ? setget.type_name + "?" : setget.type_name;
+
+        line(fmt("public {0} {1}", type_name, pascal_case(setget.name)));
         {
             TAB();
             if (is_need_wrapper) {
                 line(
                     fmt("get => "
-                        "({0})_AbilitySystemUtils_.CreateWrapperFromObject((GodotObject)ClassDB."
-                        "ClassGetProperty(Instance, PropertyName.{1}));",
+                        "Utils.CreateWrapperFromObject<{0}>((GodotObject)ClassDB."
+                        "ClassGetProperty(Instance, Property.{1}));",
                         setget.type_name,
                         pascal_case(setget.name))
                 );
-                line(fmt(
-                    "set => ClassDB.ClassSetProperty(Instance, PropertyName.{0}, value.Instance);",
-                    pascal_case(setget.name)
-                ));
+                line(
+                    fmt("set => ClassDB.ClassSetProperty(Instance, Property.{0}, "
+                        "Variant.From(value?.Instance));",
+                        pascal_case(setget.name))
+                );
             } else if (setget.is_enum) {
                 line(
-                    fmt("get => ({0})(long)ClassDB.ClassGetProperty(Instance, PropertyName.{1});",
+                    fmt("get => ({0})(long)ClassDB.ClassGetProperty(Instance, Property.{1});",
                         setget.type_name,
                         pascal_case(setget.name))
                 );
                 line(
-                    fmt("set => ClassDB.ClassSetProperty(Instance, PropertyName.{0}, (long)value);",
+                    fmt("set => ClassDB.ClassSetProperty(Instance, Property.{0}, (long)value);",
                         pascal_case(setget.name))
                 );
             } else {
-                line(
-                    fmt("get => ({0})ClassDB.ClassGetProperty(Instance, PropertyName.{1});",
-                        setget.type_name,
-                        pascal_case(setget.name))
-                );
-                line(
-                    fmt("set => ClassDB.ClassSetProperty(Instance, PropertyName.{0}, value);",
-                        pascal_case(setget.name))
-                );
+                if (generate_for_classes.has(setget.hint_string)) {
+                    auto base_cls = get_native_base_class(setget.hint_string);
+                    if (setget.hint == PROPERTY_HINT_ARRAY_TYPE) {
+                        // Handle typed array with generated class
+                        // e.g. `Array<Tag>`
+                        auto prop_name = pascal_case(setget.name);
+                        line(
+                            fmt("get => ClassDB.ClassGetProperty(Instance, "
+                                "Property.{0}).Convert<{1}, {2}>().ToList();",
+                                prop_name,
+                                base_cls,
+                                setget.hint_string)
+                        );
+                        line(
+                            fmt("set => ClassDB.ClassSetProperty(Instance, Property.{0}, "
+                                "new Godot.Collections.Array<{2}>(value.Convert<{1}, {2}>()));",
+                                prop_name,
+                                setget.hint_string,
+                                base_cls)
+                        );
+                    } else {
+                        // Handle generated class, e.g. `Tag`
+                        line(fmt(
+                            "get => ClassDB.ClassGetProperty(Instance, Property.{0}).As<{1}?>();",
+                            pascal_case(setget.name),
+                            base_cls
+                        ));
+                        line(
+                            fmt("set => ClassDB.ClassSetProperty(Instance, Property.{0}, "
+                                "Variant.From(value));",
+                                pascal_case(setget.name))
+                        );
+                    }
+                } else {
+                    line(
+                        fmt("get => ClassDB.ClassGetProperty(Instance, Property.{0}).As<{1}>();",
+                            pascal_case(setget.name),
+                            setget.type_name)
+                    );
+                    line(
+                        fmt("set => ClassDB.ClassSetProperty(Instance, Property.{0}, "
+                            "value);",
+                            pascal_case(setget.name))
+                    );
+                }
             }
         }
         line();
@@ -802,9 +579,23 @@ GenerateCSharpBindingsPlugin::ArgumentData GenerateCSharpBindingsPlugin::argumen
         else if (class_name == StringName("Object"))
             return ArgumentData(name, var_type, StringName("GodotObject"), hint, hint_string);
 
+        else if (generate_for_classes.has(class_name))
+            return ArgumentData(name, var_type, fmt("{0}?", class_name), hint, hint_string);
+
         return ArgumentData(name, var_type, class_name, hint, hint_string);
     } else if (var_type) {
-        return ArgumentData(name, var_type, types_map[var_type], hint, hint_string);
+        // Typed Array
+        if (var_type == Variant::Type::ARRAY && hint == PROPERTY_HINT_ARRAY_TYPE) {
+            return ArgumentData(
+                name,
+                var_type,
+                fmt("{0}<{1}>", "List", hint_string),
+                hint,
+                hint_string
+            );
+        } else {
+            return ArgumentData(name, var_type, types_map[var_type], hint, hint_string);
+        }
     }
 
     if (is_return) {
@@ -845,21 +636,7 @@ GenerateCSharpBindingsPlugin::arguments_parse_values(
     for (int i = start_idx; i < args.size(); i++) {
         DefaultData dd
             = arguments_get_formatted_value(argument_parse(args[i]), def_args[i - start_idx]);
-        if (dd.is_need_remap) {
-            String remap_name = fmt("arg_{0}", (int)remapped_data.size());
-            for (const auto &it : remapped_data) {
-                if (it.second.is_equal_data(dd)) {
-                    remap_name = it.first;
-                    log(fmt("{0} will be remapped to {1}", dd.name, it.first), 4);
-                }
-            }
-
-            remapped_data[remap_name] = dd;
-            dd.arg_string = "_AbilitySystemUtils_.DefaultArgumentsData." + remap_name;
-            res.push_back(dd);
-        } else {
-            res.push_back(dd);
-        }
+        res.push_back(dd);
     }
 
     return res;
@@ -873,6 +650,8 @@ GenerateCSharpBindingsPlugin::arguments_get_formatted_value(
         return DefaultData(
             arg_data.name,
             arg_data.type_name,
+            arg_data.hint,
+            arg_data.hint_string,
             false,
             fmt("({0}){1}", arg_data.type_name, def_val)
         );
@@ -903,6 +682,8 @@ GenerateCSharpBindingsPlugin::arguments_get_formatted_value(
                     return DefaultData(
                         dd.name,
                         arg_data.type_name,
+                        arg_data.hint,
+                        arg_data.hint_string,
                         true,
                         fmt("(Variant)({0})", dd.arg_string)
                     );
@@ -1205,10 +986,9 @@ GenerateCSharpBindingsPlugin::arguments_get_formatted_value(
                     return DefaultData(
                         arg_data,
                         true,
-                        String("new {0} { {1} }")
-                            .format(
-                                Array::make(types_map[def_val.get_type()], String(", ").join(strs))
-                            ),
+                        fmt("new {0} { {1} }",
+                            types_map[def_val.get_type()],
+                            String(", ").join(strs)),
                         true
                     );
                 }
@@ -1240,7 +1020,14 @@ GenerateCSharpBindingsPlugin::arguments_get_formatted_value(
 #undef IS_DEF
     }
 
-    return DefaultData("[no name]", "[no type]", false, "\"Error\"");
+    return DefaultData(
+        "[no name]",
+        "[no type]",
+        PropertyHint::PROPERTY_HINT_NONE,
+        "[no hint string]",
+        false,
+        "\"Error\""
+    );
 }
 
 String GenerateCSharpBindingsPlugin::arguments_string_decl(
@@ -1290,12 +1077,16 @@ String GenerateCSharpBindingsPlugin::arguments_string_call(
                   return i.name == name;
               });
 
-        if (generate_for_classes.has(arg_data.type_name)) {
-            arg_strs.append(fmt("{0}.Instance", name));
+        if (generate_for_classes.has(arg_data.hint_string)
+            && arg_data.type == Variant::Type::ARRAY) {
+            arg_strs.append(
+                fmt("new Godot.Collections.Array<Resource>({0}.Convert<{1}, {2}>())",
+                    name,
+                    arg_data.hint_string,
+                    get_native_base_class(arg_data.hint_string))
+            );
         } else if (arg_data.is_enum) {
             arg_strs.append(fmt("(long){0}", name));
-        } else if (_def_res != def_remap.end() && (*_def_res).is_need_remap) {
-            arg_strs.append(fmt("{0} ?? {1}", name, (*_def_res).arg_string));
         } else {
             arg_strs.append(name);
         }
@@ -1312,31 +1103,18 @@ void GenerateCSharpBindingsPlugin::line(const String &str, int indent_override) 
 }
 
 void GenerateCSharpBindingsPlugin::force_log(const String &str, const int &indent) {
+    print(log(str, indent));
+}
+
+String GenerateCSharpBindingsPlugin::log(const String &str, const int &indent) {
     String val = String("  ").repeat(indent) + str;
-    print(val);
     opened_log_file->store_string(val);
     opened_log_file->store_8('\n');
+    return val;
 }
 
-void GenerateCSharpBindingsPlugin::log(const String &str, const int &indent) {
-    String val = String("  ").repeat(indent) + str;
-    if (is_shift_pressed) print(val);
-    opened_log_file->store_string(val);
-    opened_log_file->store_8('\n');
-}
-
-void GenerateCSharpBindingsPlugin::log_warning(const String &str, const int &indent) {
-    String s = String("  ").repeat(indent) + "WARNING: " + str;
-    if (is_shift_pressed) print(s);
-    opened_log_file->store_string(String("  ").repeat(indent) + str);
-    opened_log_file->store_8('\n');
-}
-
-void GenerateCSharpBindingsPlugin::force_log_warning(const String &str, const int &indent) {
-    String s = String("  ").repeat(indent) + "WARNING: " + str;
-    print_warning(s);
-    opened_log_file->store_string(String("  ").repeat(indent) + str);
-    opened_log_file->store_8('\n');
+String GenerateCSharpBindingsPlugin::log_warning(const String &str, const int &indent) {
+    return log("WARNING: " + str);
 }
 
 GenerateCSharpBindingsPlugin::IndentGuard GenerateCSharpBindingsPlugin::tab() {

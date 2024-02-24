@@ -35,16 +35,6 @@ class GenerateCSharpBindingsPlugin {
               is_void(false),
               is_enum(false) {}
 
-        // ArgumentData(
-        //     const String &_name, Variant::Type _type, const String &_type_name, bool _enum =
-        //     false
-        // )
-        //     : name(_name),
-        //       type_name(_type_name),
-        //       type(_type),
-        //       is_void(_type_name == "void"),
-        //       is_enum(_enum) {}
-
         ArgumentData(
             const String &_name,
             Variant::Type _type,
@@ -66,6 +56,8 @@ class GenerateCSharpBindingsPlugin {
         String name;
         String type_name;
         String arg_string;
+        PropertyHint hint;
+        String hint_string;
         bool is_need_remap;
         bool is_nullable;
 
@@ -79,6 +71,8 @@ class GenerateCSharpBindingsPlugin {
         DefaultData(
             const String &_name,
             const String &_type_name,
+            const PropertyHint _hint,
+            const String &_hint_string,
             bool need_remap,
             const String &_arg_str,
             bool nullable = false
@@ -86,6 +80,8 @@ class GenerateCSharpBindingsPlugin {
             : name(_name),
               type_name(_type_name),
               is_need_remap(need_remap),
+              hint(_hint),
+              hint_string(_hint_string),
               arg_string(_arg_str),
               is_nullable(nullable) {}
 
@@ -94,6 +90,8 @@ class GenerateCSharpBindingsPlugin {
         )
             : name(arg.name),
               type_name(arg.type_name),
+              hint(arg.hint),
+              hint_string(arg.hint_string),
               is_need_remap(need_remap),
               arg_string(_arg_str),
               is_nullable(nullable) {}
@@ -110,17 +108,8 @@ class GenerateCSharpBindingsPlugin {
     Ref<FileAccess> opened_file;
     Ref<FileAccess> opened_log_file;
     TypedArray<String> property_method_prefix;
-
     TypedArray<StringName> generate_for_classes;
-    TypedArray<StringName> avoid_caching_for_classes;
-
-    typedef std::map<StringName, std::vector<String> > extend_class_strings;
-    extend_class_strings additional_statics_for_classes;
-    extend_class_strings override_disposable_for_classes;
-
-    PackedStringArray singletons;
-    bool is_shift_pressed = false;
-    bool is_generate_unload_event = false;
+    typedef std::map<StringName, std::vector<String>> extend_class_strings;
     typedef std::map<String, DefaultData> remap_data;
 
     std::map<Variant::Type, String> types_map = {
@@ -167,10 +156,19 @@ class GenerateCSharpBindingsPlugin {
     };
 
 public:
-    bool is_need_to_update();
     void generate();
 
 private:
+    /// Returns true if the provided class is inherited from a class added in this extention.
+    /// E.g.
+    /// ```cpp
+    /// is_inherited("WaitEffect") == true;
+    /// is_inherited("Effect") == false;
+    /// ```
+    bool is_inherited(const StringName &cls) const {
+        return generate_for_classes.has(ClassDB::get_parent_class(cls));
+    }
+
     StringName get_native_base_class(const StringName &cls) const {
         auto current = cls;
         TypedArray<StringName> ignored_classes = generate_for_classes.duplicate();
@@ -184,22 +182,20 @@ private:
     }
 
     void generate_header();
+    void generate_class_names();
 
     void generate_class(const StringName &cls, remap_data &remapped_data);
-    void generate_class_utilities(const remap_data &remapped_data);
 
-    void generate_wrapper(const StringName &cls, bool is_static, bool inheritance = false);
+    void generate_wrapper(const StringName &cls, bool inheritance = false);
     void generate_constants(const StringName &cls);
     void generate_enum(const StringName &cls, const StringName &enm);
     void generate_method(
-        const StringName &cls, const Dictionary &method, bool is_static, remap_data &remapped_data
+        const StringName &cls, const Dictionary &method, remap_data &remapped_data
     );
-    void generate_default_arguments_remap(const remap_data &remapped_data);
     void generate_properties(
         const StringName &cls,
         const TypedArray<Dictionary> &props,
-        std::map<String, ArgumentData> setget_map,
-        bool is_static
+        std::map<String, ArgumentData> setget_map
     );
     ArgumentData argument_parse(const Dictionary &arg, bool is_return = false);
     ArgumentData argument_parse(
@@ -222,9 +218,8 @@ private:
         const TypedArray<Dictionary> &args, const std::vector<DefaultData> &def_remap
     );
     void line(const String &str = "", int indent_override = -1);
-    void log(const String &str = "", const int &indent = 0);
+    String log(const String &str = "", const int &indent = 0);
     void force_log(const String &str = "", const int &indent = 0);
-    void log_warning(const String &str = "", const int &indent = 0);
-    void force_log_warning(const String &str = "", const int &indent = 0);
+    String log_warning(const String &str = "", const int &indent = 0);
     IndentGuard tab();
 };

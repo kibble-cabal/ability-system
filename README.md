@@ -7,6 +7,7 @@ This extension provides a framework for implementing game mechanics. It's inspir
 1. [Installation](#installation)
     1. [If you want to include the source files](#if-you-want-to-include-the-source-files)
     2. [If you just want the build](#if-you-just-want-the-build)
+    3. [For Godot Mono (C#)](#for-godot-mono-c)
 2. [Class overview](#class-overview)
     1. [`AbilitySystem`](#abilitysystem)
     2. [`Ability`](#ability)
@@ -28,6 +29,13 @@ This extension provides a framework for implementing game mechanics. It's inspir
 1. Copy the `bin` folder, the `assets` folder (for the icons), and the `ability_system.gdextension` file somewhere into your project
 2. Update `ability_system.gdextension` with the path to the `bin` folder and the `assets` folder in your project, if necessary
 3. Open or restart Godot
+
+### For Godot Mono (C#)
+Follow the regular installation steps first.
+1. Restart your editor
+2. Make sure `AbilitySystem.cs` is copied somewhere into your project
+3. In Godot's menu bar, click: `Project` → `Tools` → `Ability System` → `Generate C# Bindings`
+4. Build your project
 
 ## Class overview
 
